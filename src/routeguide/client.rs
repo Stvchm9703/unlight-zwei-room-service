@@ -1,96 +1,124 @@
-#![deny(warnings, rust_2018_idioms)]
+use std::error::Error;
+use std::time::Duration;
 
-mod data;
+use futures::stream;
+use rand::rngs::ThreadRng;
+use rand::Rng;
+use tokio::time;
+use tonic::transport::Channel;
+use tonic::Request;
 
-use crate::routeguide::{Point, RouteNote};
-
-use futures::{Future, Stream};
-use hyper::client::connect::{Destination, HttpConnector};
-use std::time::{Duration, Instant};
-use tokio::timer::Interval;
-use tower_grpc::Request;
-use tower_hyper::{client, util};
-use tower_util::MakeService;
+use routeguide::route_guide_client::RouteGuideClient;
+use routeguide::{Point, Rectangle, RouteNote};
 
 pub mod routeguide {
-    include!(concat!(env!("OUT_DIR"), "/routeguide.rs"));
+    tonic::include_proto!("routeguide");
 }
 
-pub fn main() {
-    let _ = ::env_logger::init();
+async fn print_features(client: &mut RouteGuideClient<Channel>) -> Result<(), Box<dyn Error>> {
+    let rectangle = Rectangle {
+        lo: Some(Point {
+            latitude: 400_000_000,
+            longitude: -750_000_000,
+        }),
+        hi: Some(Point {
+            latitude: 420_000_000,
+            longitude: -730_000_000,
+        }),
+    };
 
-    let uri: http::Uri = format!("http://localhost:10000").parse().unwrap();
+    let mut stream = client
+        .list_features(Request::new(rectangle))
+        .await?
+        .into_inner();
 
-    let dst = Destination::try_from_uri(uri.clone()).unwrap();
-    let connector = util::Connector::new(HttpConnector::new(4));
-    let settings = client::Builder::new().http2_only(true).clone();
-    let mut make_client = client::Connect::with_builder(connector, settings);
+    while let Some(feature) = stream.message().await? {
+        println!("NOTE = {:?}", feature);
+    }
 
-    let rg = make_client
-        .make_service(dst)
-        .map_err(|e| {
-            panic!("HTTP/2 connection failed; err={:?}", e);
-        })
-        .and_then(move |conn| {
-            use crate::routeguide::client::RouteGuide;
+    Ok(())
+}
 
-            let conn = tower_request_modifier::Builder::new()
-                .set_origin(uri)
-                .build(conn)
-                .unwrap();
+async fn run_record_route(client: &mut RouteGuideClient<Channel>) -> Result<(), Box<dyn Error>> {
+    let mut rng = rand::thread_rng();
+    let point_count: i32 = rng.gen_range(2, 100);
 
-            RouteGuide::new(conn)
-                // Wait until the client is ready...
-                .ready()
-                .map_err(|e| eprintln!("client closed: {:?}", e))
-        })
-        .and_then(|mut client| {
-            let start = Instant::now();
-            client
-                .get_feature(Request::new(Point {
-                    latitude: 409146138,
+    let mut points = vec![];
+    for _ in 0..=point_count {
+        points.push(random_point(&mut rng))
+    }
+
+    println!("Traversing {} points", points.len());
+    let request = Request::new(stream::iter(points));
+
+    match client.record_route(request).await {
+        Ok(response) => println!("SUMMARY: {:?}", response.into_inner()),
+        Err(e) => println!("something went wrong: {:?}", e),
+    }
+
+    Ok(())
+}
+
+async fn run_route_chat(client: &mut RouteGuideClient<Channel>) -> Result<(), Box<dyn Error>> {
+    let start = time::Instant::now();
+
+    let outbound = async_stream::stream! {
+        let mut interval = time::interval(Duration::from_secs(1));
+
+        while let time = interval.tick().await {
+            let elapsed = time.duration_since(start);
+            let note = RouteNote {
+                location: Some(Point {
+                    latitude: 409146138 + elapsed.as_secs() as i32,
                     longitude: -746188906,
-                }))
-                .map_err(|e| eprintln!("GetFeature request failed; err={:?}", e))
-                .and_then(move |response| {
-                    println!("FEATURE = {:?}", response);
+                }),
+                message: format!("at {:?}", elapsed),
+            };
 
-                    // Wait for the client to be ready again...
-                    client
-                        .ready()
-                        .map_err(|e| eprintln!("client closed: {:?}", e))
-                })
-                .map(move |client| (client, start))
-        })
-        .and_then(|(mut client, start)| {
-            let outbound = Interval::new_interval(Duration::from_secs(1))
-                .map(move |t| {
-                    let elapsed = t.duration_since(start);
-                    RouteNote {
-                        location: Some(Point {
-                            latitude: 409146138 + elapsed.as_secs() as i32,
-                            longitude: -746188906,
-                        }),
-                        message: format!("at {:?}", elapsed),
-                    }
-                })
-                .map_err(|e| panic!("timer error: {:?}", e));
+            yield note;
+        }
+    };
 
-            client
-                .route_chat(Request::new(outbound))
-                .map_err(|e| {
-                    eprintln!("RouteChat request failed; err={:?}", e);
-                })
-                .and_then(|response| {
-                    let inbound = response.into_inner();
-                    inbound
-                        .for_each(|note| {
-                            println!("NOTE = {:?}", note);
-                            Ok(())
-                        })
-                        .map_err(|e| eprintln!("gRPC inbound stream error: {:?}", e))
-                })
-        });
+    let response = client.route_chat(Request::new(outbound)).await?;
+    let mut inbound = response.into_inner();
 
-    tokio::run(rg);
+    while let Some(note) = inbound.message().await? {
+        println!("NOTE = {:?}", note);
+    }
+
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut client = RouteGuideClient::connect("http://[::1]:10000").await?;
+
+    println!("*** SIMPLE RPC ***");
+    let response = client
+        .get_feature(Request::new(Point {
+            latitude: 409_146_138,
+            longitude: -746_188_906,
+        }))
+        .await?;
+    println!("RESPONSE = {:?}", response);
+
+    println!("\n*** SERVER STREAMING ***");
+    print_features(&mut client).await?;
+
+    println!("\n*** CLIENT STREAMING ***");
+    run_record_route(&mut client).await?;
+
+    println!("\n*** BIDIRECTIONAL STREAMING ***");
+    run_route_chat(&mut client).await?;
+
+    Ok(())
+}
+
+fn random_point(rng: &mut ThreadRng) -> Point {
+    let latitude = (rng.gen_range(0, 180) - 90) * 10_000_000;
+    let longitude = (rng.gen_range(0, 360) - 180) * 10_000_000;
+    Point {
+        latitude,
+        longitude,
+    }
 }

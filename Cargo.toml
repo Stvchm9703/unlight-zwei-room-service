@@ -1,52 +1,39 @@
 [package]
-name = "tower-grpc-examples"
+name = "tonic-examples"
 version = "0.1.0"
+authors = ["Lucio Franco <luciofranco14@gmail.com>"]
 edition = "2018"
-authors = ["Carl Lerche <me@carllerche.com>"]
 publish = false
+license = "MIT"
+
+
 
 [[bin]]
-name = "helloworld-server"
-path = "src/helloworld/server.rs"
-
-[[bin]]
-name = "helloworld-client"
-path = "src/helloworld/client.rs"
-
-[[bin]]
-name = "metadata-server"
-path = "src/metadata/server.rs"
-
-[[bin]]
-name = "metadata-client"
-path = "src/metadata/client.rs"
-
-[[bin]]
-name = "route-guide-server"
+name = "routeguide-server"
 path = "src/routeguide/server.rs"
 
 [[bin]]
-name = "route-guide-client"
+name = "routeguide-client"
 path = "src/routeguide/client.rs"
 
 [dependencies]
-futures = "0.1"
-bytes = "0.4"
-env_logger = { version = "0.5", default-features = false }
-log = "0.4"
-http = "0.1"
-prost = "0.5"
-tokio = "0.1"
-tower-request-modifier = { git = "https://github.com/tower-rs/tower-http" }
-tower-hyper = "0.1"
-hyper = "0.12"
-tower-grpc = { path = "../tower-grpc", features = ["tower-hyper"] }
-tower-service = "0.2"
-tower-util = "0.1"
-
-# For the routeguide example
-serde = { version = "1.0.91", features = ["derive"] }
-serde_json = "1.0.39"
+tonic = { path = "A:/Gitrepo/tonic/tonic", features = ["tls"] }
+prost = "0.6"
+tokio = { version = "0.2", features = ["rt-threaded", "time", "stream", "fs", "macros", "uds"] }
+futures = { version = "0.3", default-features = false, features = ["alloc"] }
+async-stream = "0.2"
+tower = "0.3"
+# Required for routeguide
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rand = "0.7"
+# Tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.2.0-alpha", features = ["tracing-log"] }
+tracing-attributes = "0.1"
+tracing-futures = "0.2"
+# Required for wellknown types
+prost-types = "0.6"
 
 [build-dependencies]
-tower-grpc-build = { path = "../tower-grpc-build",  features = ["tower-hyper"]  }
+tonic-build = { path = "A:/Gitrepo/tonic/tonic-build" }
