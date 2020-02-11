@@ -1,22 +1,33 @@
 [package]
-name = "tonic-examples"
+name = "unlight-zwei-room-service"
 version = "0.1.0"
-authors = ["Lucio Franco <luciofranco14@gmail.com>"]
+authors = ["Steven Cheng<stv.chm@gmail.com>"]
 edition = "2018"
 publish = false
 license = "MIT"
 
 
 
-[[bin]]
-name = "routeguide-server"
-path = "src/routeguide/server.rs"
+# [[bin]]
+# name = "routeguide-server"
+# path = "src/routeguide/server.rs"
+
+# [[bin]]
+# name = "routeguide-client"
+# path = "src/routeguide/client.rs"
+
 
 [[bin]]
-name = "routeguide-client"
-path = "src/routeguide/client.rs"
+name = "room_service_server"
+path = "src/RoomService/server.rs"
+
+# [[bin]]
+# name = "room_service_client"
+# path = "src/RoomService/client.rs"
+
 
 [dependencies]
+redis = "0.15.1"
 tonic = { path = "A:/Gitrepo/tonic/tonic", features = ["tls"] }
 prost = "0.6"
 tokio = { version = "0.2", features = ["rt-threaded", "time", "stream", "fs", "macros", "uds"] }
