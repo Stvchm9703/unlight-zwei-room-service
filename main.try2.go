@@ -80,7 +80,6 @@ func main() {
 	s := grpc.NewServer(
 		grpc.Creds(credentials.NewServerTLSFromCert(insecure.Cert)),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-			server.TokenInterceptor,
 			grpc_validator.UnaryServerInterceptor(),
 		)),
 		grpc.StreamInterceptor(grpc_validator.StreamServerInterceptor()),
