@@ -98,7 +98,6 @@ Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
 Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
 Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:\
 $(CURDIR)/vendor/ \
-		--swagger_out=third_party/OpenAPI/ \
 		--govalidators_out=gogoimport=true,\
 Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types,\
 Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types,\
@@ -106,13 +105,9 @@ Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
 Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
 Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:\
 $(CURDIR)/vendor/ \
-		proto/cred.proto
+		proto/*.proto
 	# gvm issue :  move the genrated file to current directory
-	mv $(CURDIR)/vendor/cred.pb.go $(CURDIR)/proto/
-	mv $(CURDIR)/vendor/cred.validator.pb.go $(CURDIR)/proto/
-	mv $(CURDIR)/vendor/cred.pb.gw.go $(CURDIR)/proto/
-	## Workaround for https://github.com/grpc-ecosystem/grpc-gateway/issues/229.
-	sed -i.bak "s/empty.Empty/types.Empty/g" proto/cred.pb.gw.go && rm proto/cred.pb.gw.go.bak
+	mv $(CURDIR)/vendor/*.go $(CURDIR)/proto/
+	
 
-	# ## Generate static assets for OpenAPI UI
-	# statik -m -f -src third_party/OpenAPI/
+	
