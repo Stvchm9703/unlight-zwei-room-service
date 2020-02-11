@@ -1,7 +1,7 @@
 package serverctlNoRedis
 
 import (
-	pb "RoomStatus/proto"
+	pb "ULZRoomService/proto"
 	"context"
 	"errors"
 	"log"
@@ -9,7 +9,7 @@ import (
 )
 
 // DeleteRoom :
-func (b *RoomStatusBackend) DeleteRoom(ctx context.Context, req *pb.RoomReq) (*pb.RoomResp, error) {
+func (b *ULZRoomServiceBackend) DeleteRoom(ctx context.Context, req *pb.RoomReq) (*pb.RoomResp, error) {
 	// return nil, status.Errorf(codes.Unimplemented, "method DeleteRoom not implemented")
 	b.mu.Lock()
 	defer b.mu.Unlock()

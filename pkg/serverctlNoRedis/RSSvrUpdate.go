@@ -1,8 +1,8 @@
 package serverctlNoRedis
 
 import (
-	"RoomStatus/common"
-	pb "RoomStatus/proto"
+	"ULZRoomService/common"
+	pb "ULZRoomService/proto"
 	"context"
 	"errors"
 	"log"
@@ -10,7 +10,7 @@ import (
 )
 
 // UpdateRoom :
-func (b *RoomStatusBackend) UpdateRoom(ctx context.Context, req *pb.CellStatusReq) (*pb.CellStatusResp, error) {
+func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.CellStatusReq) (*pb.CellStatusResp, error) {
 	// return nil, status.Errorf(codes.Unimplemented, "method DeleteRoom not implemented")
 	common.PrintReqLog(ctx, req)
 	var rmg *RoomMgr

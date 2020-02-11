@@ -1,10 +1,10 @@
 package serverctlNoRedis
 
 import (
-	// _ "RoomStatus"
-	cm "RoomStatus/common"
-	cf "RoomStatus/config"
-	pb "RoomStatus/proto"
+	// _ "ULZRoomService"
+	cm "ULZRoomService/common"
+	cf "ULZRoomService/config"
+	pb "ULZRoomService/proto"
 	"errors"
 	"fmt"
 	"log"
@@ -13,22 +13,22 @@ import (
 	// ants "github.com/panjf2000/ants/v2"
 )
 
-var _ pb.RoomStatusServer = (*RoomStatusBackend)(nil)
+var _ pb.ULZRoomServiceServer = (*ULZRoomServiceBackend)(nil)
 
 // Remark: the framework make consider "instant" request
 //
-type RoomStatusBackend struct {
-	// pb.RoomStatusServer
+type ULZRoomServiceBackend struct {
+	// pb.ULZRoomServiceServer
 	mu       *sync.Mutex
 	CoreKey  string
 	Roomlist []*RoomMgr
 }
 
 // New : Create new backend
-func New(conf *cf.ConfTmp) *RoomStatusBackend {
+func New(conf *cf.ConfTmp) *ULZRoomServiceBackend {
 	ck := "RSCore" + cm.HashText(conf.APIServer.IP)
 
-	g := RoomStatusBackend{
+	g := ULZRoomServiceBackend{
 		CoreKey: ck,
 		mu:      &sync.Mutex{},
 	}
@@ -36,7 +36,7 @@ func New(conf *cf.ConfTmp) *RoomStatusBackend {
 	return &g
 }
 
-func (this *RoomStatusBackend) Shutdown() {
+func (this *ULZRoomServiceBackend) Shutdown() {
 	log.Println("in shtdown proc")
 	/// TODO: send closing msg to all client
 	for _, v := range this.Roomlist {
@@ -60,15 +60,6 @@ func (this *RoomStatusBackend) Shutdown() {
 	log.Println("endof shutdown proc:", this.CoreKey)
 }
 
-// 	Impletement from GameCtl.pb.go(auto-gen file)
-// 		CreateCred(req *pb.CreateCredReq, srv pb.RoomStatus_CreateCredServer) error
-// 		CreateRoom(context.Context, *types.Empty) (*Room, error)
-// 		GetRoomList(context.Context, *RoomListRequest) (*RoomListResponse, error)
-// 		GetRoomCurrentInfo(context.Context, *RoomRequest) (*Room, error)
-// 		GetRoomStream(*RoomRequest, RoomStatus_GetRoomStreamServer) error
-// 		UpdateRoomStatus(context.Context, *CellStatus) (*types.Empty, error)
-// 		DeleteRoom(context.Context, *RoomRequest) (*types.Empty, error)
-
 // PrintReqLog
 
 // ======================================================================================================
@@ -76,14 +67,14 @@ func (this *RoomStatusBackend) Shutdown() {
 type RoomMgr struct {
 	pb.Room
 	conn_pool       *sync.Map
-	get_only_stream map[string]*pb.RoomStatus_GetRoomStreamServer
+	get_only_stream map[string]*pb.ULZRoomService_GetRoomStreamServer
 	// close_link      *sync.Map
 }
 
 // ----------------------------------------------------------------------------------------------------
 // roommgr.get_only_stream
 
-func (rm *RoomMgr) GetGS(user_id string) *pb.RoomStatus_GetRoomStreamServer {
+func (rm *RoomMgr) GetGS(user_id string) *pb.ULZRoomService_GetRoomStreamServer {
 	log.Println(rm.conn_pool)
 	a, ok := rm.get_only_stream[user_id]
 	if ok {
@@ -92,7 +83,7 @@ func (rm *RoomMgr) GetGS(user_id string) *pb.RoomStatus_GetRoomStreamServer {
 	return nil
 }
 
-func (rm *RoomMgr) AddGS(user_id string, stream *pb.RoomStatus_GetRoomStreamServer) (bool, error) {
+func (rm *RoomMgr) AddGS(user_id string, stream *pb.ULZRoomService_GetRoomStreamServer) (bool, error) {
 	_, ok := rm.get_only_stream[user_id]
 	if ok {
 		return false, errors.New("StreamExist")

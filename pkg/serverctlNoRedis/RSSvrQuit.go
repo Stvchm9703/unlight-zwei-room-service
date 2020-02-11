@@ -1,7 +1,7 @@
 package serverctlNoRedis
 
 import (
-	pb "RoomStatus/proto"
+	pb "ULZRoomService/proto"
 	"context"
 	"errors"
 	"time"
@@ -9,7 +9,7 @@ import (
 	types "github.com/gogo/protobuf/types"
 )
 
-func (b *RoomStatusBackend) QuitRoom(ctx context.Context, req *pb.RoomCreateReq) (*types.Empty, error) {
+func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomCreateReq) (*types.Empty, error) {
 	var tmpRoom *RoomMgr
 	delRoom := false
 	for _, v := range b.Roomlist {

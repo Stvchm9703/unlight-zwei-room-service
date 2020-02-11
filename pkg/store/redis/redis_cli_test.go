@@ -1,9 +1,9 @@
 package redis_test
 
 import (
-	cf "RoomStatus/config"
-	pb "RoomStatus/proto"
-	rd "RoomStatus/pkg/store/redis"
+	cf "ULZRoomService/config"
+	rd "ULZRoomService/pkg/store/redis"
+	pb "ULZRoomService/proto"
 	"encoding/json"
 	"log"
 	"testing"
@@ -43,13 +43,13 @@ func TestConnect(t *testing.T) {
 }
 
 var testObj = pb.Room{
-	Key:        "Rm0122212",
-	HostId:     "192.180",
-	DuelerId:   "123.125",
-	Status:     0,
-	Round:      1,
-	Cell:       1,
-	CellStatus: nil,
+	Key: "Rm0122212",
+	// HostId:     "192.180",
+	// DuelerId:   "123.125",
+	// Status:     0,
+	// Round:      1,
+	// Cell:       1,
+	// CellStatus: nil,
 }
 
 func TestParaSet(t *testing.T) {

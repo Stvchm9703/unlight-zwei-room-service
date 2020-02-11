@@ -1,5 +1,5 @@
 package main 
-import "RoomStatus/pkg/serverctlNoRedis/cmd"
+import "ULZRoomService/pkg/serverctlNoRedis/cmd"
 func main() {
 	cmd.Execute()
 }

@@ -1,4 +1,4 @@
-module RoomStatus
+module ULZRoomService
 
 go 1.13.1
 
@@ -13,14 +13,14 @@ require (
 	github.com/gocql/gocql v0.0.0-20200131111108-92af2e088537 // indirect
 	github.com/godror/godror v0.11.2 // indirect
 	github.com/gogo/gateway v1.1.0
-	github.com/gogo/googleapis v1.3.0
+	github.com/gogo/googleapis v1.3.0 // indirect
 	github.com/gogo/grpc-example v0.0.0-20190407094907-47d5c98b94b9
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/mock v1.3.1
 	github.com/golang/protobuf v1.3.3
 	github.com/google/flatbuffers v1.11.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
-	github.com/grpc-ecosystem/grpc-gateway v1.12.2
+	github.com/grpc-ecosystem/grpc-gateway v1.13.0
 	github.com/jackc/pgx v3.6.2+incompatible // indirect
 	github.com/jinzhu/gorm v1.9.12
 	github.com/knq/snaker v0.0.0-20181215144011-2bc8a4db4687 // indirect
@@ -43,7 +43,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200128174031-69ecbb4d6d5d
 	golang.org/x/sys v0.0.0-20200124204421-9fbb57f87de9 // indirect
 	golang.org/x/tools v0.0.0-20200131211209-ecb101ed6550 // indirect
-	google.golang.org/genproto v0.0.0-20200211035748-55294c81d784 // indirect
+	google.golang.org/genproto v0.0.0-20200211111953-2dc5924e3898 // indirect
 
 	google.golang.org/grpc v1.27.0
 	gopkg.in/jcmturner/gokrb5.v7 v7.5.0 // indirect

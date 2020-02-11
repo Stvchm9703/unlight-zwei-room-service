@@ -1,8 +1,8 @@
 package serverctlNoRedis
 
 import (
-	cm "RoomStatus/common"
-	pb "RoomStatus/proto"
+	cm "ULZRoomService/common"
+	pb "ULZRoomService/proto"
 	"context"
 	"errors"
 	"log"
@@ -11,7 +11,7 @@ import (
 )
 
 // CreateRoom :
-func (b *RoomStatusBackend) CreateRoom(ctx context.Context, req *pb.RoomCreateReq) (*pb.RoomResp, error) {
+func (b *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomCreateReq) (*pb.RoomResp, error) {
 	cm.PrintReqLog(ctx, req)
 	b.mu.Lock()
 	defer b.mu.Unlock()
@@ -57,7 +57,7 @@ func (b *RoomStatusBackend) CreateRoom(ctx context.Context, req *pb.RoomCreateRe
 	}
 	rmTmp1 := RoomMgr{
 		Room:            rmTmp,
-		get_only_stream: make(map[string]*pb.RoomStatus_GetRoomStreamServer),
+		get_only_stream: make(map[string]*pb.ULZRoomService_GetRoomStreamServer),
 		conn_pool:       &sync.Map{},
 	}
 

@@ -1,15 +1,15 @@
 package serverctlNoRedis
 
 import (
-	cm "RoomStatus/common"
-	pb "RoomStatus/proto"
+	cm "ULZRoomService/common"
+	pb "ULZRoomService/proto"
 	"errors"
 	"fmt"
 	"log"
 	"time"
 )
 
-func (b *RoomStatusBackend) GetRoomStream(csq *pb.CellStatusReq, rs pb.RoomStatus_GetRoomStreamServer) error {
+func (b *ULZRoomServiceBackend) GetRoomStream(csq *pb.CellStatusReq, rs pb.ULZRoomService_GetRoomStreamServer) error {
 	cm.PrintReqLog(rs.Context(), csq)
 	no_rm_flg := true
 	var vf *RoomMgr
@@ -53,6 +53,6 @@ func (b *RoomStatusBackend) GetRoomStream(csq *pb.CellStatusReq, rs pb.RoomStatu
 }
 
 // RoomStream : Skipp the service
-func (b *RoomStatusBackend) RoomStream(stream pb.RoomStatus_RoomStreamServer) error {
+func (b *ULZRoomServiceBackend) RoomStream(stream pb.ULZRoomService_RoomStreamServer) error {
 	return nil
 }

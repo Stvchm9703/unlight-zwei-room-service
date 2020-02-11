@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"RoomStatus/config"
+	"ULZRoomService/config"
 	"encoding/json"
 	"log"
 	"strconv"

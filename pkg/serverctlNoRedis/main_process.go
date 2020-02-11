@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"syscall"
 
-	cf "RoomStatus/config"
-	"RoomStatus/insecure"
-	pb "RoomStatus/proto"
+	cf "ULZRoomService/config"
+	"ULZRoomService/insecure"
+	pb "ULZRoomService/proto"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
@@ -19,7 +19,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 	// Static files
-	// _ "RoomStatus/statik"
+	// _ "ULZRoomService/statik"
 )
 
 var (
@@ -39,7 +39,6 @@ func ServerMainProcess(testing_config *cf.ConfTmp) {
 	s := grpc.NewServer(
 		grpc.Creds(credentials.NewServerTLSFromCert(insecure.Cert)),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-			TokenInterceptor,
 			grpc_validator.UnaryServerInterceptor(),
 		)),
 		grpc.StreamInterceptor(grpc_validator.StreamServerInterceptor()),
@@ -47,7 +46,7 @@ func ServerMainProcess(testing_config *cf.ConfTmp) {
 
 	RMServer := New(testing_config)
 
-	pb.RegisterRoomStatusServer(
+	pb.RegisterULZRoomServiceServer(
 		s, RMServer)
 	log.Println("Serving gRPC on https://", addr)
 	go func() {
@@ -57,7 +56,7 @@ func ServerMainProcess(testing_config *cf.ConfTmp) {
 
 	// call your cleanup method with this channel as a routine
 }
-func beforeGracefulStop(ss *grpc.Server, rms *RoomStatusBackend) {
+func beforeGracefulStop(ss *grpc.Server, rms *ULZRoomServiceBackend) {
 	log.Println("BeforeGracefulStop")
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)

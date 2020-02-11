@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	// Wb "webserver/server"
-	Cf "RoomStatus/config"
+	Cf "ULZRoomService/config"
 	// "webserver/server/common"
 
 	"github.com/spf13/cobra"

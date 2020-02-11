@@ -1,15 +1,15 @@
 package serverctlNoRedis
 
 import (
-	"RoomStatus/common"
-	pb "RoomStatus/proto"
+	"ULZRoomService/common"
+	pb "ULZRoomService/proto"
 	"context"
 	"log"
 	"time"
 )
 
 // GetRoomInfo :
-func (b *RoomStatusBackend) GetRoomInfo(ctx context.Context, req *pb.RoomReq) (*pb.RoomResp, error) {
+func (b *ULZRoomServiceBackend) GetRoomInfo(ctx context.Context, req *pb.RoomReq) (*pb.RoomResp, error) {
 	common.PrintReqLog(ctx, req)
 	for _, v := range b.Roomlist {
 		log.Println(v.Key)

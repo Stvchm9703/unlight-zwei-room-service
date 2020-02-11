@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	Cf "RoomStatus/config"
-	wb "RoomStatus/pkg/serverctlNoRedis"
+	Cf "ULZRoomService/config"
+	wb "ULZRoomService/pkg/serverctlNoRedis"
 
 	"github.com/spf13/cobra"
 )
