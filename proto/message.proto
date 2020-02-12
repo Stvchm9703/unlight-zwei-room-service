@@ -113,7 +113,8 @@ message RoomMsg {
 
 
 message RoomReq {
-    string                  key                     = 1;
+    string                  room_key                = 1;
+    string                  user_id                 = 2;
 }
 
 message RoomCreateReq {
@@ -150,8 +151,3 @@ message RoomSearchReq {
     string                  key                     = 6;
 }
 
-
-message RoomJoinReq {
-    string                  room_key                = 1;
-    string                  user_id                 = 2;
-}

@@ -21,5 +21,4 @@ service RoomService {
     rpc SendMessage     (RoomMsg)           returns (Empty){};
     rpc QuitRoom        (RoomReq)           returns (Empty){}
     rpc QuickPair       (RoomSearchReq)     returns (Room){};
-
 }
