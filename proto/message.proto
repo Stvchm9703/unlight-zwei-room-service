@@ -113,7 +113,7 @@ message RoomMsg {
 
 
 message RoomReq {
-    string                  room_key                = 1;
+    string                  key                     = 1;
     string                  user_id                 = 2;
 }
 

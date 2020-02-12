@@ -24,14 +24,12 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 	var tmp pb.Room
 
 	// read room
-	if _, err := wkbox.GetPara(&req.Key, &tmp); err != nil {
+	if _, err := wkbox.GetPara(&req.RoomKey, &tmp); err != nil {
 		log.Fatalln(err)
 		return nil, status.Errorf(500, err.Error())
 	}
 
-
-	// if tmp.Host.key == 
-	
+	// if tmp.Host.key ==
 
 	// if tmpr.HostId == req.HostId {
 	// 	// Self quit, not start play yet
