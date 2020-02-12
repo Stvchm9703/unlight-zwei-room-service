@@ -1,28 +1,32 @@
-package serverctl
+package serverCtl
 
 import (
 	cm "ULZRoomService/common"
-	cf "ULZRoomService/config"
-	rd "ULZRoomService/pkg/store/redis"
+	// cf "ULZRoomService/config"
+	// rd "ULZRoomService/pkg/store/redis"
 	pb "ULZRoomService/proto"
-	"errors"
+	"context"
+	// "errors"
+	"github.com/gogo/status"
 	"log"
-	"sync"
+	// "sync"
+	"time"
 )
 
-func (this *ULZRoomServiceBackend) CreateRoom(context.Context, *pb.RoomCreateReq) (*pb.Room, error) {
+func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomCreateReq) (*pb.Room, error) {
 	cm.PrintReqLog(ctx, req)
 	start := time.Now()
-	b.mu.Lock()
+	this.mu.Lock()
+	wkbox := this.searchAliveClient()
+
 	defer func() {
-		b.mu.Unlock()
+		wkbox.Preserve(false)
+		this.mu.Unlock()
 		elapsed := time.Since(start)
 		log.Printf("Quit-Room took %s", elapsed)
 	}()
-
-	wkbox := this.searchAliveClient()
 	// for loop it
-	tmptime := time.Now().String() + req.HostId
+	tmptime := time.Now().String() + req.Host.GetId()
 	var f = ""
 	for {
 		f = cm.HashText(tmptime)
@@ -48,8 +52,8 @@ func (this *ULZRoomServiceBackend) CreateRoom(context.Context, *pb.RoomCreateReq
 		log.Println(err)
 		return nil, status.Errorf(500, err.Error())
 	}
-	wkbox.Preserve(false)
+
 	// b.Roomlist = append(b.Roomlist, &rmTmp)
-	
+
 	return &rmTmp, nil
 }

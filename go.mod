@@ -16,6 +16,7 @@ require (
 	github.com/gogo/googleapis v1.3.0 // indirect
 	github.com/gogo/grpc-example v0.0.0-20190407094907-47d5c98b94b9
 	github.com/gogo/protobuf v1.3.1
+	github.com/gogo/status v1.1.0
 	github.com/golang/mock v1.3.1
 	github.com/golang/protobuf v1.3.3
 	github.com/google/flatbuffers v1.11.0

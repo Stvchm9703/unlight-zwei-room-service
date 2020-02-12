@@ -67,14 +67,14 @@ func (this *ULZRoomServiceBackend) Shutdown() {
 type RoomMgr struct {
 	pb.Room
 	conn_pool       *sync.Map
-	get_only_stream map[string]*pb.ULZRoomService_GetRoomStreamServer
+	get_only_stream map[string]*pb.RoomService_GetRoomStreamServer
 	// close_link      *sync.Map
 }
 
 // ----------------------------------------------------------------------------------------------------
 // roommgr.get_only_stream
 
-func (rm *RoomMgr) GetGS(user_id string) *pb.ULZRoomService_GetRoomStreamServer {
+func (rm *RoomMgr) GetGS(user_id string) *pb.RoomService_GetRoomStreamServer {
 	log.Println(rm.conn_pool)
 	a, ok := rm.get_only_stream[user_id]
 	if ok {
@@ -83,7 +83,7 @@ func (rm *RoomMgr) GetGS(user_id string) *pb.ULZRoomService_GetRoomStreamServer 
 	return nil
 }
 
-func (rm *RoomMgr) AddGS(user_id string, stream *pb.ULZRoomService_GetRoomStreamServer) (bool, error) {
+func (rm *RoomMgr) AddGS(user_id string, stream *pb.RoomService_ServerBroadcastServer) (bool, error) {
 	_, ok := rm.get_only_stream[user_id]
 	if ok {
 		return false, errors.New("StreamExist")

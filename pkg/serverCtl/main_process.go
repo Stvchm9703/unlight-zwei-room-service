@@ -1,4 +1,4 @@
-package serverctl
+package serverCtl
 
 import (
 	"log"
