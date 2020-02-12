@@ -112,3 +112,6 @@ func (this *RoomSearchReq) Validate() error {
 	}
 	return nil
 }
+func (this *RoomJoinReq) Validate() error {
+	return nil
+}
