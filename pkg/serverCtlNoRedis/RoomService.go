@@ -2,8 +2,8 @@ package serverCtlNoRedis
 
 import (
 	// _ "ULZRoomService"
-	cm "ULZRoomService/common"
-	cf "ULZRoomService/config"
+	cm "ULZRoomService/pkg/common"
+	cf "ULZRoomService/pkg/config"
 	pb "ULZRoomService/proto"
 	"errors"
 	"fmt"
@@ -20,7 +20,7 @@ type ULZRoomServiceBackend struct {
 	// pb.ULZRoomServiceServer
 	mu       *sync.Mutex
 	CoreKey  string
-	Roomlist []*RoomMgr
+	Roomlist map[string]*RoomMgr
 }
 
 // New : Create new backend
@@ -39,15 +39,10 @@ func (this *ULZRoomServiceBackend) Shutdown() {
 	/// TODO: send closing msg to all client
 	for _, v := range this.Roomlist {
 		log.Println("Server OS.sigKill")
-		v.BroadCast("RmSvrMgr",
-			&pb.RoomMsg{
-				Key:    v.Key,
-				FormId: "RmSvrMgr",
-				ToId:   "ALL_USER",
-			})
+		v.BroadCast("RmSvrMgr", cm.MsgSystShutdown(v.Room.Key))
 		v.ClearAll()
 	}
-	this.CloseDB()
+	// this.CloseDB()
 	log.Println("endof shutdown proc:", this.CoreKey)
 }
 
@@ -61,59 +56,73 @@ type RoomMgr struct {
 }
 
 // ----------------------------------------------------------------------------------------------------
-// roommgr.get_only_stream
+// roommgr.clientConn
 
-func (rm *RoomMgr) GetGS(user_id string) *pb.RoomService_ServerBroadcastServer {
-	log.Println(rm.conn_pool)
-	a, ok := rm.clientConn[user_id]
+func (rm *ULZRoomServiceBackend) GetStream(roomKey *string, userId *string) *pb.RoomService_ServerBroadcastServer {
+	a, ok := rm.Roomlist[*roomKey]
+	b, ok := a.clientConn[*userId]
 	if ok {
-		return a
+		return b
 	}
 	return nil
 }
 
-func (rm *RoomMgr) AddGS(user_id string, stream *pb.RoomService_ServerBroadcastServer) (bool, error) {
-	_, ok := rm.get_only_stream[user_id]
-	if ok {
-		return false, errors.New("StreamExist")
+func (rm *ULZRoomServiceBackend) AddStream(roomKey *string, userId *string, stream *pb.RoomService_ServerBroadcastServer) (bool, error) {
+	// _, ok := rm.bc_stream[user_id]
+	a, ok := rm.Roomlist[*roomKey]
+	if !ok {
+		return false, errors.New("ROOM_NOT_EXIST")
 	}
 
-	rm.get_only_stream[user_id] = stream
+	_, ok = a.clientConn[*userId]
+	if ok {
+		return false, errors.New("USER_EXIST")
+	}
+	a.clientConn[*userId] = stream
 	return true, nil
 }
 
-func (rm *RoomMgr) DelGS(user_id string) (bool, error) {
-	log.Println("Del Stream:", user_id)
-	if rm.get_only_stream[user_id] != nil {
-		*(rm.get_only_stream[user_id]) = nil
-		delete(rm.get_only_stream, user_id)
+func (rm *ULZRoomServiceBackend) DelStream(roomKey *string, userId *string) (bool, error) {
+	log.Println("Del Stream:", userId)
+	a, ok := rm.Roomlist[*roomKey]
+	if !ok {
+		return false, errors.New("ROOM_NOT_EXIST")
+	}
+	if a.clientConn[*userId] != nil {
+		*(a.clientConn[*userId]) = nil
+		delete(a.clientConn, *userId)
 		return true, nil
 	}
 	return false, errors.New("StreamNotExist")
 }
-func (rm *RoomMgr) BroadCastGS(from string, message *pb.CellStatusResp) {
-	log.Println(rm.get_only_stream)
 
-	for k, v := range rm.get_only_stream {
-		if k != from {
-			tmpv := *v
-			tmpv.Send(message)
+func (rm *ULZRoomServiceBackend) BroadCast(roomkey *string, from *string, message *pb.RoomMsg) error {
+	log.Println("BS!", message)
+	log.Println(rm.Roomlist[*roomkey])
+	rmb, ok := rm.Roomlist[*roomkey]
+	if !ok {
+		log.Println("room not exist")
+		return errors.New("ROOM_NOT_EXIST")
+	}
+	for k, v := range rmb.clientConn {
+		if k != *from {
+			(*v).Send(message)
 		}
 	}
-
+	return nil
 }
 
 // ---------------------------------------------------------------------------------------------
+// RoomStreamBox Controlling
 
-// RoomMgr
-func (rm *RoomMgr) BroadCast(from string, message *pb.CellStatusResp) {
-	log.Println("BS!", message)
-	rm.BroadCastGS(from, message)
-}
 func (rm *RoomMgr) ClearAll() {
 	log.Println("ClearAll Proc")
-	for k := range rm.get_only_stream {
-		fmt.Println(k)
-		rm.DelGS(k)
+	for _, vc := range rm.clientConn {
+		(*vc).Send(cm.MsgSystShutdown(&rm.Room.Key))
 	}
+	for k := range rm.clientConn {
+		*(rm.clientConn[k]) = nil
+		delete(rm.clientConn, k)
+	}
+	return
 }

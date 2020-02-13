@@ -11,62 +11,66 @@ import (
 )
 
 // CreateRoom :
-func (b *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomCreateReq) (*pb.RoomResp, error) {
+
+func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomCreateReq) (*pb.Room, error) {
 	cm.PrintReqLog(ctx, req)
-	b.mu.Lock()
-	defer b.mu.Unlock()
-	for _, vr := range b.Roomlist {
-		if vr.HostId == req.UserId || vr.DuelerId == req.UserId {
-			return &pb.RoomResp{
-				Timestamp: time.Now().String(),
-				ResponseMsg: &pb.RoomResp_Error{
-					Error: &pb.ErrorMsg{
-						MsgInfo: "GameSetExistWithCurrentPlayer",
-						MsgDesp: "Current Player <" + req.UserId + "> is in other Room <" + vr.Key + ">",
-					},
-				},
-			}, errors.New("GameSetExistWithCurrentPlayer")
-		}
-	}
+	start := time.Now()
+	this.mu.Lock()
+	// wkbox := this.searchAliveClient()
 
-	tmptime := time.Now().String() + req.UserId
+	defer func() {
+		// wkbox.Preserve(false)
+		this.mu.Unlock()
+		elapsed := time.Since(start)
+		log.Printf("Quit-Room took %s", elapsed)
+	}()
+	// for loop it
+	tmptime := time.Now().String() + req.Host.GetId()
 	var f = ""
-	for {
-		f = cm.HashText(tmptime)
+	// for {
+	// 	f = cm.HashText(tmptime)
+	// 	l, err := (wkbox).ListRem(&f)
+	// 	if err != nil {
+	// 		log.Println(err)
+	// 		return nil, status.Errorf(codes.Internal, err.Error())
+	// 	}
+	// 	if len(*l) == 0 {
+	// 		break
+	// 	}
+	// }
+	for k, v := range this.Roomlist {
 
-		// ------
-		var l []*string
-		for _, v := range b.Roomlist {
-			if v.Key == f {
-				l = append(l, &v.Key)
-			}
-		}
-		if len(l) == 0 {
-			break
-		}
-		// -----
 	}
+
 	rmTmp := pb.Room{
-		Key:        "Rm" + f,
-		HostId:     req.UserId,
-		DuelerId:   "",
-		Status:     0,
-		Round:      0,
-		Cell:       -1,
-		CellStatus: nil,
+		Key:              "Rm" + f,
+		Host:             req.Host,
+		Dueler:           nil,
+		Status:           pb.RoomStatus_ON_WAIT,
+		Turns:            0,
+		CharCardLimitMax: req.CharCardLimitMax,
+		CharCardLimitMin: req.CharCardLimitMin,
+		CharCardNvn:      req.CharCardNvn,
 	}
-	rmTmp1 := RoomMgr{
-		Room:            rmTmp,
-		get_only_stream: make(map[string]*pb.ULZRoomService_GetRoomStreamServer),
-		conn_pool:       &sync.Map{},
+	f = "Rm" + f
+
+	// Set Para
+	// if _, err := wkbox.SetPara(&rmTmp.Key, rmTmp); err != nil {
+	// 	log.Println(err)
+	// 	return nil, status.Errorf(codes.Internal, err.Error())
+	// }
+
+	_, ok := this.roomStream[f]
+	if !ok {
+		return nil, status.Error(codes.AlreadyExists, "ROOM_IS_EXIST")
 	}
 
-	b.Roomlist = append(b.Roomlist, &rmTmp1)
-	log.Println("Created Room : <", rmTmp)
-	return &pb.RoomResp{
-		Timestamp: time.Now().String(),
-		ResponseMsg: &pb.RoomResp_RoomInfo{
-			RoomInfo: &rmTmp,
-		},
-	}, nil
+	rmStream := RoomStreamBox{
+		key:      f,
+		password: req.Password,
+	}
+
+	this.roomStream[f] = &rmStream
+
+	return &rmTmp, nil
 }

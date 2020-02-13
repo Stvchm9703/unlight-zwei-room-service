@@ -3,56 +3,33 @@ package serverCtlNoRedis
 import (
 	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
-	"errors"
-	"fmt"
+	"context"
+	"github.com/gogo/status"
+	"google.golang.org/grpc/codes"
 	"log"
-	"time"
 )
 
-func (b *ULZRoomServiceBackend) GetRoomStream(csq *pb.CellStatusReq, rs pb.ULZRoomService_GetRoomStreamServer) error {
-	cm.PrintReqLog(rs.Context(), csq)
-	no_rm_flg := true
-	var vf *RoomMgr
-
-	for _, v := range b.Roomlist {
-		if v.Key == csq.Key {
-			if v.GetGS(csq.UserId) != nil {
-				return errors.New("GetStreamIsExist")
-			}
-			v.AddGS(csq.UserId, &rs)
-			log.Println("Add GS Stream")
-			no_rm_flg = false
-			vf = v
-			break
-		}
-	}
-	if no_rm_flg {
-		return errors.New("NoRoomExist")
+func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.RoomService_ServerBroadcastServer) error {
+	_, err := this.AddStream(&rReq.Key, &rReq.User.Id, &stream)
+	if err != nil {
+		return status.Error(codes.NotFound, err.Error())
 	}
 
 	go func() {
-		<-rs.Context().Done()
+		<-stream.Context().Done()
 		log.Println("close done")
-		_, err := vf.DelGS(csq.UserId)
+		_, err := this.DelStream(&rReq.Key, &rReq.User.Id)
 		if err != nil {
 			log.Println(err)
 		}
-		vf.BroadCast(csq.UserId,
-			&pb.CellStatusResp{
-				UserId:    csq.UserId,
-				Key:       vf.Key,
-				Status:    201,
-				Timestamp: time.Now().String(),
-				ResponseMsg: &pb.CellStatusResp_ErrorMsg{
-					ErrorMsg: &pb.ErrorMsg{MsgInfo: "ConnEnd", MsgDesp: fmt.Sprintf("User<%v> End to Room<%v>", csq.UserId, vf.Key)},
-				},
-			})
+		this.BroadCast(&rReq.Key, &rReq.User.Id,
+			cm.MsgUserQuitRoom(&rReq.Key, &rReq.User.Id, &rReq.User.Name))
 	}()
 	for {
 	}
 }
 
-// RoomStream : Skipp the service
-func (b *ULZRoomServiceBackend) RoomStream(stream pb.ULZRoomService_RoomStreamServer) error {
-	return nil
+func (this *ULZRoomServiceBackend) SendMessage(ctx context.Context, msg *pb.RoomMsg) (*pb.Empty, error) {
+	this.BroadCast(&msg.Key, &msg.FormId, msg)
+	return nil, nil
 }
