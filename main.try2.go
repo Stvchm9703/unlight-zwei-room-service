@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"syscall"
 
-	cf "ULZRoomService/config"
+	cf "ULZRoomService/pkg/config"
 	"ULZRoomService/insecure"
 	server "ULZRoomService/pkg/serverctlNoRedis"
 	pb "ULZRoomService/proto"

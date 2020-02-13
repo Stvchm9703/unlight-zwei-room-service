@@ -30,7 +30,7 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 		return nil, status.Errorf(500, err.Error())
 	}
 
-	_, err := b.DelStream(&req.Key, &req.UserId)
+	_, err := b.DelStream(&req.Key, &req.User.Id)
 	if err != nil {
 		log.Println(err)
 	}
@@ -40,13 +40,13 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 		Key:     tmp.Key,
 		FormId:  "SYSTEM",
 		ToId:    "ALL_USER",
-		Message: req.UserId + " is quited room",
+		Message: req.User.Id + " is quited room",
 		MsgType: pb.RoomMsg_SYSTEM_INFO,
 	})
 
 	//
 	// edit room
-	if tmp.Host.Id == req.UserId {
+	if tmp.Host.Id == req.User.Id {
 		tmp.Host = nil
 		// remove room stream
 		b.BroadCast(&req.Key, &b.CoreKey, cm.MsgHostQuitRoom(&tmp.Key, &tmp.Id))
@@ -58,7 +58,7 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 		// clean room memory
 		tmp.Status = pb.RoomStatus_ON_DESTROY
 		// it will wait watcher to remove
-	} else if tmp.Dueler.Id == req.UserId {
+	} else if tmp.Dueler.Id == req.User.Id {
 		tmp.Dueler = nil
 		tmp.Status = pb.RoomStatus_ON_WAIT
 		// available for new player

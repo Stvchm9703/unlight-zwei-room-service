@@ -14,7 +14,7 @@ import (
 )
 
 func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.RoomService_ServerBroadcastServer) error {
-	_, err := this.AddStream(&rReq.Key, &rReq.UserId, &stream)
+	_, err := this.AddStream(&rReq.Key, &rReq.User.Id, &stream)
 	if err != nil {
 		return status.Error(codes.NotFound, err.Error())
 	}
@@ -22,12 +22,12 @@ func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.R
 	go func() {
 		<-stream.Context().Done()
 		log.Println("close done")
-		_, err := this.DelStream(&rReq.Key, &rReq.UserId)
+		_, err := this.DelStream(&rReq.Key, &rReq.User.Id)
 		if err != nil {
 			log.Println(err)
 		}
-		this.BroadCast(&rReq.Key, &rReq.UserId,
-			cm.MsgUserQuitRoom(&rReq.Key, &rReq.UserId, &rReq.UserName))
+		this.BroadCast(&rReq.Key, &rReq.User.Id,
+			cm.MsgUserQuitRoom(&rReq.Key, &rReq.User.Id, &rReq.User.Name))
 	}()
 	for {
 	}

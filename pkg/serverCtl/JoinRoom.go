@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-// GetRoomInfo :
-func (b *ULZRoomServiceBackend) JoinRoom(ctx context.Context, req *pb.RoomReq) (*pb.RoomResp, error) {
+// JoinRoom :
+func (b *ULZRoomServiceBackend) JoinRoom(ctx context.Context, req *pb.RoomReq) (*pb.Room, error) {
 	start := time.Now()
 	b.mu.Lock()
 	wkbox := b.searchAliveClient()
@@ -30,8 +30,7 @@ func (b *ULZRoomServiceBackend) JoinRoom(ctx context.Context, req *pb.RoomReq) (
 		tmp.Dueler = req.User
 	}
 
-	return &pb.RoomResp{
-		Result:   &tmp,
-		ErrorMsg: nil,
-	}, nil
+	wkbox.UpdatePara(&tmp.Key, tmp)
+	
+	return &tmp, nil
 }
