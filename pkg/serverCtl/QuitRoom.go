@@ -1,16 +1,13 @@
 package serverCtl
 
 import (
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
 	"log"
 	"time"
 
 	"github.com/gogo/status"
-)
-
-var (
-	systemID = "SYSTEM"
 )
 
 func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (*pb.Empty, error) {
@@ -38,9 +35,9 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 	}
 
 	// broadcast to room
-	b.BroadCast(&req.Key, &systemID, &pb.RoomMsg{
+	b.BroadCast(&req.Key, &b.CoreKey, &pb.RoomMsg{
 		Key:     tmp.Key,
-		FormId:  systemID,
+		FormId:  "SYSTEM",
 		ToId:    "ALL_USER",
 		Message: req.UserId + " is quited room",
 		MsgType: pb.RoomMsg_SYSTEM_INFO,
@@ -51,13 +48,7 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 	if tmp.Host.Id == req.UserId {
 		tmp.Host = nil
 		// remove room stream
-		b.BroadCast(&req.Key, &systemID, &pb.RoomMsg{
-			Key:     tmp.Key,
-			FormId:  systemID,
-			ToId:    "ALL_USER",
-			Message: "host is quited room, this room is going abort",
-			MsgType: pb.RoomMsg_SYSTEM_INFO,
-		})
+		b.BroadCast(&req.Key, &b.CoreKey, cm.MsgHostQuitRoom(&tmp.Key))
 		a, _ := b.roomStream[req.Key]
 		a.ClearAll()
 		b.roomStream[req.Key] = nil
@@ -74,7 +65,6 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 	}
 
 	wkbox.UpdatePara(&req.Key, tmp)
-
 	// return nil, errors.New("NotImplement")
 	return nil, nil
 

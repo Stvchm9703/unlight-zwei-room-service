@@ -1,7 +1,7 @@
 package serverCtl
 
 import (
-	cm "ULZRoomService/common"
+	cm "ULZRoomService/pkg/common"
 	// cf "ULZRoomService/config"
 	// rd "ULZRoomService/pkg/store/redis"
 	pb "ULZRoomService/proto"
@@ -37,7 +37,7 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 		l, err := (wkbox).ListRem(&f)
 		if err != nil {
 			log.Println(err)
-			return nil, status.Errorf(500, err.Error())
+			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 		if len(*l) == 0 {
 			break
@@ -53,13 +53,25 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 		CharCardLimitMin: req.CharCardLimitMin,
 		CharCardNvn:      req.CharCardNvn,
 	}
+	f = "Rm" + f
 
+	// Set Para
 	if _, err := wkbox.SetPara(&rmTmp.Key, rmTmp); err != nil {
 		log.Println(err)
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	// b.Roomlist = append(b.Roomlist, &rmTmp)
+	_, ok := this.roomStream[f]
+	if !ok {
+		return nil, status.Error(codes.AlreadyExists, "ROOM_IS_EXIST")
+	}
+
+	rmStream := RoomStreamBox{
+		key:      f,
+		password: req.Password,
+	}
+
+	this.roomStream[f] = &rmStream
 
 	return &rmTmp, nil
 }

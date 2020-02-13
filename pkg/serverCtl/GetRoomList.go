@@ -43,7 +43,7 @@ func (b *ULZRoomServiceBackend) GetRoomList(ctx context.Context, req *pb.RoomSea
 	var res_list []*pb.RoomSH
 
 	for v := range RmList {
-		res_list = append(res_list, (RmList[v]).ToParseSH())
+		res_list = append(res_list, ToParseSH(RmList[v]))
 	}
 
 	res := &pb.RoomListResp{
@@ -53,7 +53,7 @@ func (b *ULZRoomServiceBackend) GetRoomList(ctx context.Context, req *pb.RoomSea
 	return res, nil
 }
 
-func (this *pb.Room) ToParseSH() *pb.RoomSH {
+func ToParseSH(this *pb.Room) *pb.RoomSH {
 	return &pb.RoomSH{
 		Key:        this.Key,
 		HostName:   this.Host.Name,

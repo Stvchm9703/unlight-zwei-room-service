@@ -1,4 +1,4 @@
-package serverctlNoRedis
+package serverCtlNoRedis
 
 import (
 	// _ "ULZRoomService"
@@ -9,11 +9,10 @@ import (
 	"fmt"
 	"log"
 	"sync"
-	"time"
 	// ants "github.com/panjf2000/ants/v2"
 )
 
-var _ pb.ULZRoomServiceServer = (*ULZRoomServiceBackend)(nil)
+var _ pb.RoomServiceServer = (*ULZRoomServiceBackend)(nil)
 
 // Remark: the framework make consider "instant" request
 //
@@ -32,7 +31,6 @@ func New(conf *cf.ConfTmp) *ULZRoomServiceBackend {
 		CoreKey: ck,
 		mu:      &sync.Mutex{},
 	}
-	g.InitDB(&conf.Database)
 	return &g
 }
 
@@ -42,17 +40,10 @@ func (this *ULZRoomServiceBackend) Shutdown() {
 	for _, v := range this.Roomlist {
 		log.Println("Server OS.sigKill")
 		v.BroadCast("RmSvrMgr",
-			&pb.CellStatusResp{
-				UserId:    "RmSvrMgr",
-				Key:       v.Key,
-				Status:    201,
-				Timestamp: time.Now().String(),
-				ResponseMsg: &pb.CellStatusResp_ErrorMsg{
-					ErrorMsg: &pb.ErrorMsg{
-						MsgInfo: "ConnEnd",
-						MsgDesp: "Server OS.sigKill",
-					},
-				},
+			&pb.RoomMsg{
+				Key:    v.Key,
+				FormId: "RmSvrMgr",
+				ToId:   "ALL_USER",
 			})
 		v.ClearAll()
 	}
@@ -66,17 +57,15 @@ func (this *ULZRoomServiceBackend) Shutdown() {
 // RoomMgr : Room Manager
 type RoomMgr struct {
 	pb.Room
-	conn_pool       *sync.Map
-	get_only_stream map[string]*pb.RoomService_GetRoomStreamServer
-	// close_link      *sync.Map
+	clientConn map[string]*pb.RoomService_ServerBroadcastServer
 }
 
 // ----------------------------------------------------------------------------------------------------
 // roommgr.get_only_stream
 
-func (rm *RoomMgr) GetGS(user_id string) *pb.RoomService_GetRoomStreamServer {
+func (rm *RoomMgr) GetGS(user_id string) *pb.RoomService_ServerBroadcastServer {
 	log.Println(rm.conn_pool)
-	a, ok := rm.get_only_stream[user_id]
+	a, ok := rm.clientConn[user_id]
 	if ok {
 		return a
 	}

@@ -2,8 +2,8 @@ package serverCtl
 
 import (
 	// _ "ULZRoomService"
-	cm "ULZRoomService/common"
-	cf "ULZRoomService/config"
+	cm "ULZRoomService/pkg/common"
+	cf "ULZRoomService/pkg/config"
 	rd "ULZRoomService/pkg/store/redis"
 	pb "ULZRoomService/proto"
 	"errors"
@@ -26,7 +26,8 @@ type ULZRoomServiceBackend struct {
 	roomStream map[string](*RoomStreamBox)
 }
 type RoomStreamBox struct {
-	roomKey    string
+	key        string
+	password   string
 	clientConn map[string]*pb.RoomService_ServerBroadcastServer
 }
 
@@ -57,7 +58,6 @@ func (this *ULZRoomServiceBackend) Shutdown() {
 	for _, v := range this.roomStream {
 		log.Println("Server OS.sigKill")
 		v.ClearAll()
-
 	}
 
 	// this.CloseDB()
@@ -128,9 +128,8 @@ func (rm *ULZRoomServiceBackend) BroadCast(roomkey *string, from *string, messag
 
 func (rm *RoomStreamBox) ClearAll() {
 	log.Println("ClearAll Proc")
-	shutMsg := &pb.RoomMsg{}
 	for _, vc := range rm.clientConn {
-		(*vc).Send(shutMsg)
+		(*vc).Send(cm.MsgSystShutdown(&rm.key))
 	}
 	for k := range rm.clientConn {
 		*(rm.clientConn[k]) = nil

@@ -119,16 +119,17 @@ message RoomReq {
 }
 
 message RoomCreateReq {
-    RmUserInfo              host                    = 1;
-    string                  password                = 2;
+    string                  key                     = 1;
+    RmUserInfo              host                    = 2;
+    string                  password                = 3;
     
-    int32                   cost_limit_max          = 3;
-    int32                   cost_limit_min          = 4;
+    int32                   cost_limit_max          = 4;
+    int32                   cost_limit_min          = 5;
     // 1vs1 or 3vs3
-    int32                   char_card_nvn           = 5;
+    int32                   char_card_nvn           = 6;
     // Limitation for Charecter Card Cost
-    RmCharCardInfo          char_card_limit_max     = 6;
-    RmCharCardInfo          char_card_limit_min     = 7;
+    RmCharCardInfo          char_card_limit_max     = 7;
+    RmCharCardInfo          char_card_limit_min     = 8;
 
 }
 

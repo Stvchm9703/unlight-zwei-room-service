@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"syscall"
 
-	cf "ULZRoomService/config"
+	cf "ULZRoomService/pkg/config"
 	"ULZRoomService/insecure"
 	pb "ULZRoomService/proto"
 
@@ -46,8 +46,7 @@ func ServerMainProcess(testing_config *cf.ConfTmp) {
 
 	RMServer := New(testing_config)
 
-	pb.RegisterRoomServiceServer(
-		s, RMServer)
+	pb.RegisterRoomServiceServer(s, RMServer)
 	log.Println("Serving gRPC on https://", addr)
 	go func() {
 		panic(s.Serve(lis))
