@@ -99,16 +99,3 @@ func (this *RoomListResp) Validate() error {
 	}
 	return nil
 }
-func (this *RoomSearchReq) Validate() error {
-	if this.CharCardLimitMax != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CharCardLimitMax); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("CharCardLimitMax", err)
-		}
-	}
-	if this.CharCardLimitMin != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CharCardLimitMin); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("CharCardLimitMin", err)
-		}
-	}
-	return nil
-}
