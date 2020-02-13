@@ -22,7 +22,7 @@ func (b *ULZRoomServiceBackend) DeleteRoom(ctx context.Context, req *pb.RoomReq)
 		log.Printf("Quit-Room took %s", elapsed)
 	}()
 
-	if _, err := wkbox.RemovePara(&req.RoomKey); err != nil {
+	if _, err := wkbox.RemovePara(&req.Key); err != nil {
 		log.Fatalln(err)
 		return nil, status.Errorf(500, err.Error())
 	}

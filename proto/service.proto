@@ -17,6 +17,7 @@ service RoomService {
     rpc GetRoomList     (RoomSearchReq)     returns (RoomListResp){ }; 
     rpc GetRoomInfo     (RoomReq)           returns (RoomResp){};
     rpc DeleteRoom      (RoomReq)           returns (RoomResp){};
+    rpc UpdateRoom      (RoomCreateReq)     returns (Room){};
     rpc ServerBroadcast (RoomReq)           returns (stream RoomMsg){};
     rpc SendMessage     (RoomMsg)           returns (Empty){};
     rpc QuitRoom        (RoomReq)           returns (Empty){}

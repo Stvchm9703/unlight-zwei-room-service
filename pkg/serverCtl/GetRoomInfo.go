@@ -22,7 +22,7 @@ func (b *ULZRoomServiceBackend) GetRoomInfo(ctx context.Context, req *pb.RoomReq
 	}()
 
 	var tmp pb.Room
-	if _, err := wkbox.GetPara(&req.RoomKey, &tmp); err != nil {
+	if _, err := wkbox.GetPara(&req.Key, &tmp); err != nil {
 		log.Fatalln(err)
 		return nil, status.Errorf(500, err.Error())
 	}

@@ -14,6 +14,7 @@ func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.R
 	return nil
 }
 
-func (this *ULZRoomServiceBackend) SendMessage(context.Context, *pb.RoomMsg) (*pb.Empty, error) {
+func (this *ULZRoomServiceBackend) SendMessage(ctx context.Context, msg *pb.RoomMsg) (*pb.Empty, error) {
+	this.BroadCast(&msg.Key, &msg.FormId, msg)
 	return nil, nil
 }
