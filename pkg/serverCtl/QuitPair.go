@@ -9,6 +9,6 @@ import (
 )
 
 // GetRoomInfo :
-func (b *ULZRoomServiceBackend) QuickPair(ctx context.Context, request *pb.RoomSearchReq) (*pb.Room, error) {
-	return nil, status.Error(codes.Unimplemented , "NOT_YET_IMPLEMENT")
+func (b *ULZRoomServiceBackend) QuickPair(ctx context.Context, request *pb.RoomCreateReq) (*pb.Room, error) {
+	return nil, status.Error(codes.Unimplemented, "NOT_YET_IMPLEMENT")
 }

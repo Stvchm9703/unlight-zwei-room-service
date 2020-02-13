@@ -29,10 +29,6 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if room == nil {
-		return nil, status.Error(codes.NotFound, "ROOM_NOT_FOUND")
-	}
-
 	room.Password = req.Password
 	room.CostLimitMax = req.CostLimitMax
 	room.CostLimitMin = req.CostLimitMin
@@ -42,7 +38,5 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 
 	wkbox.UpdatePara(&room.Key, room)
 
-	// log.Println("b.RoomList", b.Roomlist)
-	return nil, nil
-
+	return &room, nil
 }

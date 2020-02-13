@@ -1,7 +1,7 @@
-package serverctlNoRedis
+package serverCtlNoRedis
 
 import (
-	cm "ULZRoomService/common"
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"errors"
 	"fmt"

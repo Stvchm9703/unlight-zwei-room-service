@@ -1,7 +1,7 @@
 package redis_test
 
 import (
-	cf "ULZRoomService/config"
+	cf "ULZRoomService/pkg/config"
 	rd "ULZRoomService/pkg/store/redis"
 	pb "ULZRoomService/proto"
 	"encoding/json"

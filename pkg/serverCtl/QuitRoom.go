@@ -10,6 +10,7 @@ import (
 	"github.com/gogo/status"
 )
 
+// QuitRoom : Handle
 func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (*pb.Empty, error) {
 	start := time.Now()
 	b.mu.Lock()
@@ -48,7 +49,7 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 	if tmp.Host.Id == req.UserId {
 		tmp.Host = nil
 		// remove room stream
-		b.BroadCast(&req.Key, &b.CoreKey, cm.MsgHostQuitRoom(&tmp.Key))
+		b.BroadCast(&req.Key, &b.CoreKey, cm.MsgHostQuitRoom(&tmp.Key, &tmp.Id))
 		a, _ := b.roomStream[req.Key]
 		a.ClearAll()
 		b.roomStream[req.Key] = nil

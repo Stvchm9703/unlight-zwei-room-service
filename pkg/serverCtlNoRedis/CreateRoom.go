@@ -1,4 +1,4 @@
-package serverctlNoRedis
+package serverCtlNoRedis
 
 import (
 	cm "ULZRoomService/common"

@@ -1,12 +1,14 @@
 package serverCtl
 
 import (
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
 
 	"log"
 
 	"github.com/gogo/status"
+
 	"google.golang.org/grpc/codes"
 	// "time"
 )
@@ -25,13 +27,7 @@ func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.R
 			log.Println(err)
 		}
 		this.BroadCast(&rReq.Key, &rReq.UserId,
-			&pb.RoomMsg{
-				Key:     rReq.Key,
-				FormId:  rReq.UserId,
-				ToId:    "ALL_USER",
-				MsgType: pb.RoomMsg_SYSTEM_INFO,
-				Message: rReq.UserName + " is offline",
-			})
+			cm.MsgUserQuitRoom(&rReq.Key, &rReq.UserId, &rReq.UserName))
 	}()
 	for {
 	}

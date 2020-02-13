@@ -114,8 +114,9 @@ message RoomMsg {
 
 message RoomReq {
     string                  key                     = 1;
-    string                  user_id                 = 2;
-    string                  user_name               = 3;
+    RmUserInfo              user                    = 2;
+    bool                    is_duel                 = 3;
+    string                  password                = 4;
 }
 
 message RoomCreateReq {

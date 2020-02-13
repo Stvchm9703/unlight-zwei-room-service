@@ -11,7 +11,7 @@ import (
 )
 
 // GetRoomList :
-func (b *ULZRoomServiceBackend) GetRoomList(ctx context.Context, req *pb.RoomSearchReq) (*pb.RoomListResp, error) {
+func (b *ULZRoomServiceBackend) GetRoomList(ctx context.Context, req *pb.RoomCreateReq) (*pb.RoomListResp, error) {
 	start := time.Now()
 	wkbox := b.searchAliveClient()
 	defer func() {

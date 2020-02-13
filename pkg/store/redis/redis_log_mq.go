@@ -4,7 +4,7 @@
 package redis
 
 import (
-	"ULZRoomService/config"
+	"ULZRoomService/pkg/config"
 	"log"
 
 	"github.com/go-redis/redis"
