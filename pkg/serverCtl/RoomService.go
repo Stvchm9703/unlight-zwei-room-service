@@ -37,7 +37,7 @@ func New(conf *cf.ConfTmp) *ULZRoomServiceBackend {
 	rdfl := []*rd.RdsCliBox{}
 	for i := 0; i < conf.CacheDb.WorkerNode; i++ {
 		rdf := rd.New(ck, "wKU"+cm.HashText("num"+strconv.Itoa(i)))
-		if _, err := rdf.Connect(conf.CacheDb); err == nil {
+		if _, err := rdf.Connect(&conf.CacheDb); err == nil {
 			rdfl = append(rdfl, rdf)
 		}
 	}

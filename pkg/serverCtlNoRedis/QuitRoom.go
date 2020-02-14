@@ -26,12 +26,6 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 		return nil, status.Errorf(codes.NotFound, "ROOM_NOT_EXIST")
 	}
 
-	// read room
-	// if _, err := wkbox.GetPara(&req.Key, &tmp); err != nil {
-	// 	log.Fatalln(err)
-	// 	return nil, status.Errorf(500, err.Error())
-	// }
-
 	_, err := b.DelStream(&req.Key, &req.User.Id)
 	if err != nil {
 		log.Println(err)

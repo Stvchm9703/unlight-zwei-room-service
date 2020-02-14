@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"syscall"
 
-	cf "ULZRoomService/pkg/config"
 	"ULZRoomService/insecure"
+	cf "ULZRoomService/pkg/config"
 	server "ULZRoomService/pkg/serverctlNoRedis"
 	pb "ULZRoomService/proto"
 
@@ -87,8 +87,7 @@ func main() {
 
 	RMServer := server.New(&testing_config)
 
-	pb.RegisterULZRoomServiceServer(
-		s, RMServer)
+	pb.RegisterRoomServiceServer(s, RMServer)
 	log.Println("Serving gRPC on tcp://", addr)
 	go func() {
 		panic(s.Serve(lis))

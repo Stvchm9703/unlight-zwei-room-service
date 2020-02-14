@@ -1,4 +1,4 @@
-package serverCtl
+package serverCtlNoRedis
 
 import (
 	pb "ULZRoomService/proto"
@@ -14,23 +14,20 @@ import (
 func (b *ULZRoomServiceBackend) JoinRoom(ctx context.Context, req *pb.RoomReq) (*pb.Room, error) {
 	start := time.Now()
 	b.mu.Lock()
-	wkbox := b.searchAliveClient()
 	defer func() {
-		(wkbox).Preserve(false)
 		b.mu.Unlock()
 		elapsed := time.Since(start)
 		log.Printf("Quit-Room took %s", elapsed)
 	}()
 
-	var tmp pb.Room
-	if _, err := wkbox.GetPara(&req.Key, &tmp); err != nil {
-		return nil, status.Errorf(codes.NotFound, err.Error())
-	}
-	if tmp.Dueler == nil && req.IsDuel {
-		tmp.Dueler = req.User
+	tmp, ok := b.Roomlist[req.Key]
+	if !ok {
+		return nil, status.Error(codes.NotFound, "ROM_NOT_EXIST")
 	}
 
-	wkbox.UpdatePara(&tmp.Key, tmp)
+	if tmp.Room.Dueler == nil && req.IsDuel {
+		tmp.Room.Dueler = req.User
+	}
 
-	return &tmp, nil
+	return &tmp.Room, nil
 }

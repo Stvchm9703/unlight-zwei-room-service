@@ -46,7 +46,7 @@ func ServerMainProcess(testing_config *cf.ConfTmp) {
 
 	RMServer := New(testing_config)
 
-	pb.RegisterULZRoomServiceServer(
+	pb.RegisterRoomServiceServer(
 		s, RMServer)
 	log.Println("Serving gRPC on https://", addr)
 	go func() {

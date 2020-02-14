@@ -1,10 +1,8 @@
 package serverCtlNoRedis
 
 import (
-	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
-	"errors"
 	"log"
 	"time"
 
@@ -23,7 +21,7 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 		log.Printf("Quit-Room took %s", elapsed)
 	}()
 
-	rmg, ok := b.RoomList[req.Key]
+	rmg, ok := b.Roomlist[req.Key]
 	if !ok {
 		return nil, status.Error(codes.NotFound, "ROOM_NOT_FOUND")
 	}
@@ -35,5 +33,5 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 	rmg.Room.CharCardLimitMax = req.CharCardLimitMax
 	rmg.Room.CharCardLimitMin = req.CharCardLimitMin
 
-	return rmg.Room, nil
+	return &rmg.Room, nil
 }

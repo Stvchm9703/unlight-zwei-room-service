@@ -38,7 +38,7 @@ func (this *ULZRoomServiceBackend) Shutdown() {
 	/// TODO: send closing msg to all client
 	for _, v := range this.Roomlist {
 		log.Println("Server OS.sigKill")
-		v.BroadCast("RmSvrMgr", cm.MsgSystShutdown(v.Room.Key))
+		// v.BroadCast("RmSvrMgr", cm.MsgSystShutdown(v.Room.Key))
 		v.ClearAll()
 	}
 	// this.CloseDB()
