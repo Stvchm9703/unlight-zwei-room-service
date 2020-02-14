@@ -76,19 +76,6 @@ func (this *RoomCreateReq) Validate() error {
 	}
 	return nil
 }
-func (this *RoomResp) Validate() error {
-	if this.Result != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Result); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Result", err)
-		}
-	}
-	if this.ErrorMsg != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ErrorMsg); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("ErrorMsg", err)
-		}
-	}
-	return nil
-}
 func (this *RoomListResp) Validate() error {
 	for _, item := range this.Result {
 		if item != nil {
