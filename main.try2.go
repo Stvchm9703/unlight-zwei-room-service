@@ -10,7 +10,7 @@ import (
 
 	"ULZRoomService/insecure"
 	cf "ULZRoomService/pkg/config"
-	server "ULZRoomService/pkg/serverctlNoRedis"
+	server "ULZRoomService/pkg/serverCtlNoRedis"
 	pb "ULZRoomService/proto"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
