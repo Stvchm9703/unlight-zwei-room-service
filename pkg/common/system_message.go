@@ -35,3 +35,4 @@ func MsgUserQuitRoom(key *string, userId *string, username *string) *pb.RoomMsg 
 		MsgType: pb.RoomMsg_SYSTEM_INFO,
 	}
 }
+

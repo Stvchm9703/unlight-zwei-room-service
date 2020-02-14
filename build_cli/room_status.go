@@ -1,5 +1,6 @@
-package main 
-import "ULZRoomService/pkg/serverctlNoRedis/cmd"
-func main() {
-	cmd.Execute()
-}
+package main
+
+// import "ULZRoomService/pkg/serverctlNoRedis/cmd"
+// func main() {
+// 	cmd.Execute()
+// }

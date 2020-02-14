@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gogo/status"
+	"google.golang.org/grpc/codes"
 )
 
 // QuitRoom : Handle
@@ -27,7 +28,7 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 	// read room
 	if _, err := wkbox.GetPara(&req.Key, &tmp); err != nil {
 		log.Fatalln(err)
-		return nil, status.Errorf(500, err.Error())
+		return nil, status.Errorf(codes.NotFound, err.Error())
 	}
 
 	_, err := b.DelStream(&req.Key, &req.User.Id)
@@ -36,20 +37,16 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 	}
 
 	// broadcast to room
-	b.BroadCast(&req.Key, &b.CoreKey, &pb.RoomMsg{
-		Key:     tmp.Key,
-		FormId:  "SYSTEM",
-		ToId:    "ALL_USER",
-		Message: req.User.Id + " is quited room",
-		MsgType: pb.RoomMsg_SYSTEM_INFO,
-	})
+	b.BroadCast(&req.Key, &b.CoreKey,
+		cm.MsgUserQuitRoom(&req.Key, &req.User.Id, &req.User.Name))
 
 	//
 	// edit room
 	if tmp.Host.Id == req.User.Id {
 		tmp.Host = nil
 		// remove room stream
-		b.BroadCast(&req.Key, &b.CoreKey, cm.MsgHostQuitRoom(&tmp.Key, &tmp.Id))
+		b.BroadCast(&req.Key, &b.CoreKey,
+			cm.MsgHostQuitRoom(&tmp.Key, &tmp.Id))
 		a, _ := b.roomStream[req.Key]
 		a.ClearAll()
 		b.roomStream[req.Key] = nil

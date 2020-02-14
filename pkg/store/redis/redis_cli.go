@@ -73,14 +73,14 @@ func (rc *RdsCliBox) options() *rd.Options {
 }
 
 // Connect : Constructor of Redis client
-func (rc *RdsCliBox) Connect(cf *config.ConfTmp) (bool, error) {
+func (rc *RdsCliBox) Connect(cf *config.CfTDatabase) (bool, error) {
 	rc.lock()
 	defer rc.unlock()
 
 	rc.conn = rd.NewClient(&rd.Options{
-		Addr:     cf.Database.Host + ":" + strconv.Itoa(cf.Database.Port),
-		Password: cf.Database.Password,
-		PoolSize: cf.Database.WorkerNode,
+		Addr:     cf.Host + ":" + strconv.Itoa(cf.Port),
+		Password: cf.Password,
+		PoolSize: cf.WorkerNode,
 	})
 	// try ping conn
 	_, err := rc.conn.Ping().Result()

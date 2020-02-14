@@ -1,4 +1,4 @@
-package serverCtl
+package serverCtlNoRedis
 
 import (
 	pb "ULZRoomService/proto"
@@ -14,23 +14,20 @@ import (
 func (b *ULZRoomServiceBackend) GetRoomInfo(ctx context.Context, req *pb.RoomReq) (*pb.Room, error) {
 	start := time.Now()
 	b.mu.Lock()
-	wkbox := b.searchAliveClient()
 	defer func() {
 		b.mu.Unlock()
 		elapsed := time.Since(start)
 		log.Printf("Quit-Room took %s", elapsed)
-		(wkbox).Preserve(false)
 	}()
 
-	var tmp pb.Room
-	if _, err := wkbox.GetPara(&req.Key, &tmp); err != nil {
-		log.Fatalln(err)
-		return nil, status.Errorf(codes.NotFound, err.Error())
+	roommgt, ok := b.Roomlist[req.Key]
+	if !ok {
+		return nil, status.Error(codes.NotFound, "ROOM_NOT_FOUND")
 	}
 
-	if tmp.Password != "" && tmp.Password != req.Password {
+	if roommgt.Password != "" && roommgt.Password != req.Password {
 		return nil, status.Error(codes.PermissionDenied, "ROOM_PASSWORD_INV")
 	}
 
-	return &tmp, nil
+	return &roommgt.Room, nil
 }

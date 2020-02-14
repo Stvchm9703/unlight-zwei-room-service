@@ -1,4 +1,4 @@
-package serverctlNoRedis
+package serverCtlNoRedis
 
 import (
 	"log"
@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"syscall"
 
-	cf "ULZRoomService/config"
 	"ULZRoomService/insecure"
+	cf "ULZRoomService/pkg/config"
 	pb "ULZRoomService/proto"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"

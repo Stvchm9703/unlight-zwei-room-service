@@ -1,6 +1,7 @@
 package serverCtl
 
 import (
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
 	"encoding/json"
@@ -12,12 +13,14 @@ import (
 
 // GetRoomList :
 func (b *ULZRoomServiceBackend) GetRoomList(ctx context.Context, req *pb.RoomCreateReq) (*pb.RoomListResp, error) {
+	b.mu.Lock()
 	start := time.Now()
 	wkbox := b.searchAliveClient()
 	defer func() {
 		wkbox.Preserve(false)
 		elapsed := time.Since(start)
 		log.Printf("Quit-Room took %s", elapsed)
+		b.mu.Unlock()
 	}()
 	// var tmp pb.Room
 	var RmList []*pb.Room
@@ -43,7 +46,43 @@ func (b *ULZRoomServiceBackend) GetRoomList(ctx context.Context, req *pb.RoomCre
 	var res_list []*pb.RoomSH
 
 	for v := range RmList {
-		res_list = append(res_list, ToParseSH(RmList[v]))
+		if RmList[v].CharCardNvn == req.CharCardNvn &&
+			(req.CostLimitMax != 0 && req.CostLimitMax == RmList[v].CostLimitMax) &&
+			(req.CostLimitMax != 0 && req.CostLimitMax == RmList[v].CostLimitMax) &&
+			(req.CharCardLimitMax != nil && req.CharCardLimitMax == RmList[v].CharCardLimitMax) &&
+			(req.CharCardLimitMin != nil && req.CharCardLimitMin == RmList[v].CharCardLimitMin) {
+
+			res_list = append(res_list, cm.ToParseSH(RmList[v]))
+		}
+	}
+
+	for v := range RmList {
+		if RmList[v].CharCardNvn == req.CharCardNvn &&
+			(req.CostLimitMax != 0 && req.CostLimitMax == RmList[v].CostLimitMax) &&
+			(req.CostLimitMax != 0 && req.CostLimitMax == RmList[v].CostLimitMax) {
+			rtmp := false
+			for k := range res_list {
+				if res_list[k].Key == RmList[v].Key {
+					rtmp = true
+				}
+			}
+			if !rtmp {
+				res_list = append(res_list, cm.ToParseSH(RmList[v]))
+			}
+		}
+	}
+	for v := range RmList {
+		if RmList[v].CharCardNvn == req.CharCardNvn {
+			rtmp := false
+			for k := range res_list {
+				if res_list[k].Key == RmList[v].Key {
+					rtmp = true
+				}
+			}
+			if !rtmp {
+				res_list = append(res_list, cm.ToParseSH(RmList[v]))
+			}
+		}
 	}
 
 	res := &pb.RoomListResp{
@@ -51,16 +90,4 @@ func (b *ULZRoomServiceBackend) GetRoomList(ctx context.Context, req *pb.RoomCre
 		ErrorMsg: nil,
 	}
 	return res, nil
-}
-
-func ToParseSH(this *pb.Room) *pb.RoomSH {
-	return &pb.RoomSH{
-		Key:        this.Key,
-		HostName:   this.Host.Name,
-		HostLv:     this.Host.Level,
-		DuelerName: this.Dueler.Name,
-		DuelerLv:   this.Dueler.Level,
-		Status:     this.Status,
-		Turns:      this.Turns,
-	}
 }

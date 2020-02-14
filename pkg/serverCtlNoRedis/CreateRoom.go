@@ -1,12 +1,10 @@
 package serverCtlNoRedis
 
 import (
-	cm "ULZRoomService/common"
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
-	"errors"
 	"log"
-	"sync"
 	"time"
 )
 
@@ -16,10 +14,7 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 	cm.PrintReqLog(ctx, req)
 	start := time.Now()
 	this.mu.Lock()
-	// wkbox := this.searchAliveClient()
-
 	defer func() {
-		// wkbox.Preserve(false)
 		this.mu.Unlock()
 		elapsed := time.Since(start)
 		log.Printf("Quit-Room took %s", elapsed)
@@ -27,23 +22,17 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 	// for loop it
 	tmptime := time.Now().String() + req.Host.GetId()
 	var f = ""
-	// for {
-	// 	f = cm.HashText(tmptime)
-	// 	l, err := (wkbox).ListRem(&f)
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 		return nil, status.Errorf(codes.Internal, err.Error())
-	// 	}
-	// 	if len(*l) == 0 {
-	// 		break
-	// 	}
-	// }
-	for k, v := range this.Roomlist {
-
+	for {
+		f = cm.HashText(tmptime)
+		_, xist := this.Roomlist["Rm"+f]
+		if !xist {
+			break
+		}
 	}
 
 	rmTmp := pb.Room{
 		Key:              "Rm" + f,
+		Id:               f[0:5],
 		Host:             req.Host,
 		Dueler:           nil,
 		Status:           pb.RoomStatus_ON_WAIT,
@@ -52,25 +41,10 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 		CharCardLimitMin: req.CharCardLimitMin,
 		CharCardNvn:      req.CharCardNvn,
 	}
-	f = "Rm" + f
-
-	// Set Para
-	// if _, err := wkbox.SetPara(&rmTmp.Key, rmTmp); err != nil {
-	// 	log.Println(err)
-	// 	return nil, status.Errorf(codes.Internal, err.Error())
-	// }
-
-	_, ok := this.roomStream[f]
-	if !ok {
-		return nil, status.Error(codes.AlreadyExists, "ROOM_IS_EXIST")
+	rmTmp1 := RoomMgr{
+		Room:       rmTmp,
+		clientConn: make(map[string]*pb.RoomService_ServerBroadcastServer),
 	}
-
-	rmStream := RoomStreamBox{
-		key:      f,
-		password: req.Password,
-	}
-
-	this.roomStream[f] = &rmStream
-
+	this.Roomlist["Rm"+f] = &rmTmp1
 	return &rmTmp, nil
 }

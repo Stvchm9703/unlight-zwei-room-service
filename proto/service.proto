@@ -15,7 +15,7 @@ option java_outer_classname     = "ULZAsset";
 service RoomService {
     rpc CreateRoom      (RoomCreateReq)     returns (Room){ };
     rpc GetRoomList     (RoomCreateReq)     returns (RoomListResp){ }; 
-    rpc GetRoomInfo     (RoomReq)           returns (RoomResp){};
+    rpc GetRoomInfo     (RoomReq)           returns (Room){};
     rpc UpdateRoom      (RoomCreateReq)     returns (Room){};
     rpc ServerBroadcast (RoomReq)           returns (stream RoomMsg){};
     rpc SendMessage     (RoomMsg)           returns (Empty){};

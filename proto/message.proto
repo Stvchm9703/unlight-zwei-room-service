@@ -134,10 +134,7 @@ message RoomCreateReq {
 
 }
 
-message RoomResp {
-    Room                    result                  = 1;
-    ErrorMsg                error_msg               = 2;
-}
+
 
 message RoomListResp {
     repeated RoomSH         result                  = 1;
