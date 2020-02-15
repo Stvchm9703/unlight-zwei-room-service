@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	Cf "ULZRoomService/pkg/config"
+	wbs "ULZRoomService/pkg/serverCtl"
 	wb "ULZRoomService/pkg/serverCtlNoRedis"
 
 	"github.com/spf13/cobra"
@@ -19,6 +20,7 @@ var runCMDInput = struct {
 	checkImpTree bool
 	rootPath     string
 	skipFol      string
+	noRedis      bool
 }{}
 
 var runCmd = &cobra.Command{
@@ -44,7 +46,11 @@ var runCmd = &cobra.Command{
 		log.Println(runCMDInput.mode)
 		if err == nil {
 			// Wb.ServerMainProcess(configPoint, callPath, runCMDInput.mode)
-			wb.ServerMainProcess(configPoint)
+			if runCMDInput.noRedis {
+				wb.ServerMainProcess(configPoint)
+			} else {
+				wbs.ServerMainProcess(configPoint)
+			}
 		} else {
 			panic(err)
 		}
@@ -65,6 +71,12 @@ func init() {
 		"mode", "m",
 		"prod",
 		"server running mode [prod / dev / test]")
+
+	runCmd.Flags().BoolVarP(
+		&runCMDInput.noRedis,
+		"no-redis", "R",
+		false,
+		"server run without redis")
 
 	rootCmd.AddCommand(runCmd)
 }
