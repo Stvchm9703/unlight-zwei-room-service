@@ -25,30 +25,8 @@ var initCMD = &cobra.Command{
 	Long:  `webserver server start run `,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("webserver Static Site Generator v0.9 -- HEAD")
-		// if len(args) > 0 {
-		// 	fmt.Println(args)
-		// }
-		// // fmt.Println(initCMDInput.cfPath)
-		// var configPoint *common.ConfigTemp
-		// var err error
-		// if strings.Contains(initCMDInput.cfPath, ".toml") {
-		// 	configPoint, err = Cf.OpenToml(initCMDInput.cfPath)
-		// } else if strings.Contains(initCMDInput.cfPath, ".yaml") {
-		// 	configPoint, err = Cf.OpenYaml(initCMDInput.cfPath)
-		// }
-		// log.Println(configPoint)
-		// log.Println(initCMDInput.mode)
-		// if err == nil {
+		fmt.Println("write out config")
 
-		// 	if initCMDInput.isExport {
-		// 		Wb.ServerInitProc(configPoint, &initCMDInput.schemaPath)
-		// 	} else {
-		// 		Wb.ServerInitProc(configPoint, nil)
-		// 	}
-
-		// } else {
-		// 	panic(err)
-		// }
 	},
 }
 
