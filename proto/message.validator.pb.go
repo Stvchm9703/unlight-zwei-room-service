@@ -44,9 +44,6 @@ func (this *Room) Validate() error {
 	}
 	return nil
 }
-func (this *RoomSH) Validate() error {
-	return nil
-}
 func (this *RoomMsg) Validate() error {
 	return nil
 }
@@ -72,21 +69,6 @@ func (this *RoomCreateReq) Validate() error {
 	if this.CharCardLimitMin != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CharCardLimitMin); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("CharCardLimitMin", err)
-		}
-	}
-	return nil
-}
-func (this *RoomListResp) Validate() error {
-	for _, item := range this.Result {
-		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Result", err)
-			}
-		}
-	}
-	if this.ErrorMsg != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ErrorMsg); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("ErrorMsg", err)
 		}
 	}
 	return nil

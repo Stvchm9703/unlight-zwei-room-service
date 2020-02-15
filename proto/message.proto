@@ -65,23 +65,6 @@ message Room {
 }
 
 
-/**
-RoomSH : 
-    Room Short hand 
-    for RoomList quick load for the listing
-**/
-message RoomSH {
-    // Room-Key the id 
-    string                  key                     = 1;
-    // User-id for room-host player
-    string                  host_name               = 2; 
-    int32                   host_lv                 = 3;
-    string                  dueler_name             = 4;
-    int32                   dueler_lv               = 5;
-    RoomStatus              status                  = 6;
-    int32                   turns                   = 7;
-    
-} 
 
 
 enum RoomStatus {
@@ -136,8 +119,8 @@ message RoomCreateReq {
 
 
 
-message RoomListResp {
-    repeated RoomSH         result                  = 1;
-    ErrorMsg                error_msg               = 2;
-}
+// message RoomListResp {
+//     repeated RoomSH         result                  = 1;
+//     ErrorMsg                error_msg               = 2;
+// }
 
