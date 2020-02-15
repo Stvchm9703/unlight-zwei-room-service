@@ -19,13 +19,7 @@
 	# since we've specified a go_package option relative to that directory.
 	#
 	# proto/example.proto is the location of the protofile we use.
-echo:
-	echo $(CURDIR)
-	ls -a $$GOPATH/src/
-	cp $$GOPATH/src/GameCtl.pb.go $(CURDIR)/proto/
-	cp $$GOPATH/src/GameCtl.validator.pb.go $(CURDIR)/proto/
-	rm $$GOPATH/src/GameCtl.pb.go
-	rm $$GOPATH/src/GameCtl.validator.pb.go
+
 generate:
 	protoc \
 		-I proto \
