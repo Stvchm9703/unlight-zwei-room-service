@@ -4,10 +4,10 @@ COPY go.mod /ULZRoomService/go.mod
 COPY go.sum /ULZRoomService/go.sum
 RUN go mod download
 COPY . /ULZRoomService
-RUN go build -o build_cli/room_status.go ./RoomService
+RUN go build -o build_cli/room_status.go room_service
 
 ENTRYPOINT ["/ULZRoomService"]
 
 EXPOSE 11000
 
-CMD [ "/RoomService", "run", "-c", "config.yaml" ]
+CMD [ "/room_service", "run", "-c", "config.yaml" ]
