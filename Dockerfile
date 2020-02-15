@@ -1,7 +1,5 @@
 FROM golang:1.13.7 AS build-env
 WORKDIR /ULZRoomService
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh
 COPY go.mod /ULZRoomService/go.mod
 COPY go.sum /ULZRoomService/go.sum
 RUN go mod download
