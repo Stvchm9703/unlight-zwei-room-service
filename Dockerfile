@@ -4,7 +4,7 @@ COPY go.mod /ULZRoomService/go.mod
 COPY go.sum /ULZRoomService/go.sum
 RUN go mod download
 COPY . /ULZRoomService
-RUN go build -o build_cli/room_status.go ./ULZRoomService/RoomService
+RUN go build -o build_cli/room_status.go ./RoomService
 
 ENTRYPOINT ["/ULZRoomService"]
 
