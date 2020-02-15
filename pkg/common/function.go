@@ -1,7 +1,6 @@
 package common
 
 import (
-	pb "ULZRoomService/proto"
 	"context"
 	"encoding/json"
 	"hash/fnv"
@@ -36,16 +35,4 @@ func PrintReqLog(ctx context.Context, req interface{}) {
 
 	jsoon, _ = json.Marshal(req)
 	log.Println(string(jsoon))
-}
-
-func ToParseSH(this *pb.Room) *pb.RoomSH {
-	return &pb.RoomSH{
-		Key:        this.Key,
-		HostName:   this.Host.Name,
-		HostLv:     this.Host.Level,
-		DuelerName: this.Dueler.Name,
-		DuelerLv:   this.Dueler.Level,
-		Status:     this.Status,
-		Turns:      this.Turns,
-	}
 }
