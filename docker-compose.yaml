@@ -2,7 +2,9 @@ version: '3.0'
 services:
   app:
     image: gplang:1.13.7
-    build: go build -o build_cli/room_status.go room_status 
+    build: 
+      context: room_status 
+      dockerfile: Dockerfile
     command: go run build_cli/room_status.go run -c=config.yaml  
     ports:
       - "11000:11000"
