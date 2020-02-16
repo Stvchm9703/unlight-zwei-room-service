@@ -1,14 +1,15 @@
 version: '3.0'
 services:
   app:
-    image: ULZ-RoomService
+    image: ulz-room-service
     build: 
       context: .
       dockerfile: Dockerfile
-    command: go run build_cli/room_status.go run -c=config.yaml  
     ports:
       - "11000:11000"
-    dependce:
-      
+    depend_on:
+      - golang
+  golang:
+    image: "golang:lastest"
     
     
