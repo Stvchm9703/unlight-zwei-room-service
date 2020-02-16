@@ -1,5 +1,5 @@
 tmpl_server:
-  ip: 192.168.0.102
+  ip: 192.168.0.110
   port: 11000
   root_path: ""
   main_path: ""
@@ -10,7 +10,7 @@ tmpl_server:
 
 api_server:
   conn_type: grpc
-  ip: 192.168.0.102
+  ip: 192.168.0.110
   port: 11000
   max_pool_size: 20
   api_refer_type: proto
@@ -29,7 +29,7 @@ database:
 cache_db:
   connector: redis
   worker_node: 12
-  host: 192.168.0.110
+  host: 127.0.0.1
   port: 6379
   username: ""
   password: ""
@@ -37,7 +37,7 @@ cache_db:
 
 auth_server:
   conn_type: grpc
-  ip: 192.168.0.102
+  ip: 192.168.0.110
   port: 12000
   max_pool_size: 1
   api_refer_type: proto
