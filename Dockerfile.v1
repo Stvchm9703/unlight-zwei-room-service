@@ -1,0 +1,15 @@
+FROM golang:1.13.7 AS builder
+
+WORKDIR /app
+
+RUN go mod vendor &&\
+    go build -o ./roomserver build_cli/room_status.go &&\
+    rm -rf ./vendor
+
+COPY ./roomserver .
+
+COPY /insecure ./insecure
+
+EXPOSE 11000
+
+CMD [ "./roomserver", "start", "-c", "config.yaml" ]

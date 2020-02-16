@@ -104,4 +104,7 @@ $(CURDIR)/vendor/ \
 	mv $(CURDIR)/vendor/*.go $(CURDIR)/proto/
 	
 
+build_docker:
+	go build -o room_server build_cli/room_status.go
+	Docker build .
 	
