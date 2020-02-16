@@ -1,9 +1,10 @@
+FROM golang:1.13 AS builder
 WORKDIR /app
 COPY ./room_status ./
 
 COPY ./insecure ./insecure
 
-COPY ./config.yaml ./config.yaml
+COPY ./config.test_server.yaml ./config.yaml
 
 EXPOSE 11000
 
