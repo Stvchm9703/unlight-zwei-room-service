@@ -106,5 +106,9 @@ $(CURDIR)/vendor/ \
 
 build_docker:
 	go build -o room_server build_cli/room_status.go
-	docker build -t ulz-room-service .
+	# docker build -t ulz-room-service .
+	docker-compose build 
+
+
+
 	

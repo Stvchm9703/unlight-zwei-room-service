@@ -7,9 +7,3 @@ services:
       dockerfile: Dockerfile
     ports:
       - "11000:11000"
-    depend_on:
-      - golang
-  golang:
-    image: "golang:lastest"
-    
-    
