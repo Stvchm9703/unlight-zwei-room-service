@@ -7,7 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	cm "ULZRoomService/pkg/common"
 	Cf "ULZRoomService/pkg/config"
+
 	wbs "ULZRoomService/pkg/serverCtl"
 	wb "ULZRoomService/pkg/serverCtlNoRedis"
 
@@ -44,8 +46,14 @@ var runCmd = &cobra.Command{
 		}
 		log.Println(configPoint)
 		log.Println(runCMDInput.mode)
+
 		if err == nil {
+			// cm.
 			// Wb.ServerMainProcess(configPoint, callPath, runCMDInput.mode)
+			if runCMDInput.mode == "dev" || runCMDInput.mode == "test" {
+				cm.DebugTestRun = true
+			}
+			cm.Mode = runCMDInput.mode
 			if runCMDInput.noRedis {
 				wb.ServerMainProcess(configPoint)
 			} else {

@@ -2,6 +2,7 @@ package redis
 
 import (
 	"ULZRoomService/pkg/config"
+
 	"encoding/json"
 	"log"
 	"strconv"
@@ -27,24 +28,28 @@ import (
 
 // RdsCliBox : Redis client box custom interface
 type RdsCliBox struct {
-	conn      *rd.Client
-	CoreKey   string
-	Key       string // redis-worker-cli
-	isRunning bool
-	mu        *sync.Mutex
+	conn           *rd.Client
+	CoreKey        string
+	Key            string // redis-worker-cli
+	isRunning      bool
+	mu             *sync.Mutex
+	MarshalMethods string
 }
 
 const (
 	redisCliPoolName = "grpc-redis-cli-pool"
 	redisCliSetTime  = 0
+	meth_json        = "json"
+	meth_proto       = "proto"
 )
 
 func New(coreKey string, key string) *RdsCliBox {
 	v := sync.Mutex{}
 	return &RdsCliBox{
-		CoreKey: coreKey,
-		Key:     key,
-		mu:      &v,
+		CoreKey:        coreKey,
+		Key:            key,
+		mu:             &v,
+		MarshalMethods: meth_json,
 	}
 }
 
@@ -165,6 +170,11 @@ func (rc *RdsCliBox) register() (bool, error) {
 		return false, err
 	}
 	log.Println("register-proc:", res, ":", str)
+
+	_, err = rc.conn.Set(redisCliPoolName+"-marshal-method", rc.MarshalMethods, redisCliSetTime).Result()
+	if err != nil {
+		return false, err
+	}
 	return true, nil
 }
 
@@ -201,6 +211,11 @@ func (rc *RdsCliBox) unregister() (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	_, err = rc.conn.Del(redisCliPoolName + "-marshal-method").Result()
+	if err != nil {
+		return false, err
+	}
+
 	log.Println("unreg-proc:", str)
 	return true, nil
 }
@@ -255,9 +270,15 @@ func (rc *RdsCliBox) GetPara(key *string, target interface{}) (*interface{}, err
 	if err != nil {
 		return nil, err
 	}
+
 	if err = json.Unmarshal([]byte(resstr), &target); err != nil {
 		return nil, err
 	}
+	// if rc.MarshalMethods == meth_json {
+
+	// } else if rc.MarshalMethods == meth_proto {
+	// 	proto.Unmarshal(res, target)
+
 	return &target, nil
 }
 
@@ -275,6 +296,7 @@ func (rc *RdsCliBox) SetPara(key *string, value interface{}) (bool, error) {
 	if _, err := rc.conn.Set(keystr, strr, redisCliSetTime).Result(); err != nil {
 		return false, err
 	}
+
 	return true, nil
 }
 

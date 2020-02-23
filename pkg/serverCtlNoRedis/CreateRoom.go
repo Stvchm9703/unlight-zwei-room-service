@@ -11,7 +11,7 @@ import (
 // CreateRoom :
 
 func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomCreateReq) (*pb.Room, error) {
-	cm.PrintReqLog(ctx, req)
+	cm.PrintReqLog(ctx, "create-room", req)
 	start := time.Now()
 	this.mu.Lock()
 	defer func() {
