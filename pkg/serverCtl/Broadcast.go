@@ -36,6 +36,6 @@ func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.R
 
 func (this *ULZRoomServiceBackend) SendMessage(ctx context.Context, msg *pb.RoomMsg) (*pb.Empty, error) {
 	cm.PrintReqLog(ctx, "send-message", msg)
-	this.BroadCast(&msg.Key, &msg.FormId, msg)
+	this.BroadCast(&msg.Key, &msg.FromId, msg)
 	return &pb.Empty{}, nil
 }
