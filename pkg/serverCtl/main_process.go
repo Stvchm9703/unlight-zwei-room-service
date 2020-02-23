@@ -8,14 +8,12 @@ import (
 	"strconv"
 	"syscall"
 
-	"ULZRoomService/insecure"
 	cf "ULZRoomService/pkg/config"
 	pb "ULZRoomService/proto"
 
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 	// Static files
 	// _ "ULZRoomService/statik"
@@ -36,7 +34,7 @@ func ServerMainProcess(testing_config *cf.ConfTmp) {
 	// d := insecure.Cert
 	// log.Println(d)
 	s := grpc.NewServer(
-		grpc.Creds(credentials.NewServerTLSFromCert(insecure.Cert)),
+		// grpc.Creds(credentials.NewServerTLSFromCert(insecure.Cert)),
 		grpc.UnaryInterceptor(grpc_validator.UnaryServerInterceptor()),
 		grpc.StreamInterceptor(grpc_validator.StreamServerInterceptor()),
 	)

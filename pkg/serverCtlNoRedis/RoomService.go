@@ -27,8 +27,9 @@ func New(conf *cf.ConfTmp) *ULZRoomServiceBackend {
 	ck := "RSCore" + cm.HashText(conf.APIServer.IP)
 
 	g := ULZRoomServiceBackend{
-		CoreKey: ck,
-		mu:      &sync.Mutex{},
+		CoreKey:  ck,
+		mu:       &sync.Mutex{},
+		Roomlist: make(map[string]*RoomMgr),
 	}
 	return &g
 }
@@ -68,6 +69,13 @@ func (rm *ULZRoomServiceBackend) GetStream(roomKey *string, userId *string) *pb.
 
 func (rm *ULZRoomServiceBackend) AddStream(roomKey *string, userId *string, stream *pb.RoomService_ServerBroadcastServer) (bool, error) {
 	// _, ok := rm.bc_stream[user_id]
+
+	if rm.Roomlist == nil {
+		log.Println("help this")
+	} else {
+		log.Println("this-roomlist : ", rm.Roomlist)
+	}
+
 	a, ok := rm.Roomlist[*roomKey]
 	if !ok {
 		return false, errors.New("ROOM_NOT_EXIST")
@@ -98,6 +106,11 @@ func (rm *ULZRoomServiceBackend) DelStream(roomKey *string, userId *string) (boo
 func (rm *ULZRoomServiceBackend) BroadCast(roomkey *string, from *string, message *pb.RoomMsg) error {
 	log.Println("BS!", message)
 	log.Println(rm.Roomlist[*roomkey])
+	if rm.Roomlist == nil {
+		log.Println("help this")
+	} else {
+		log.Println("this-roomlist : ", rm.Roomlist)
+	}
 	rmb, ok := rm.Roomlist[*roomkey]
 	if !ok {
 		log.Println("room not exist")

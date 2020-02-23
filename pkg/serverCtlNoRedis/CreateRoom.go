@@ -17,7 +17,7 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 	defer func() {
 		this.mu.Unlock()
 		elapsed := time.Since(start)
-		log.Printf("Quit-Room took %s", elapsed)
+		log.Printf("Create-Room took %s", elapsed)
 	}()
 	// for loop it
 	tmptime := time.Now().String() + req.Host.GetId()
@@ -29,6 +29,7 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 			break
 		}
 	}
+	log.Println(req.Host)
 
 	rmTmp := pb.Room{
 		Key:              "Rm" + f,
@@ -45,6 +46,7 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 		Room:       rmTmp,
 		clientConn: make(map[string]*pb.RoomService_ServerBroadcastServer),
 	}
+	// !FIXME
 	this.Roomlist["Rm"+f] = &rmTmp1
 	return &rmTmp, nil
 }

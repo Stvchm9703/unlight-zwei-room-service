@@ -4,12 +4,14 @@ import (
 	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
+	"log"
+
 	"github.com/gogo/status"
 	"google.golang.org/grpc/codes"
-	"log"
 )
 
 func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.RoomService_ServerBroadcastServer) error {
+	log.Println("\nServer Broadcast Connect\n methods: ServerBroadcast")
 	_, err := this.AddStream(&rReq.Key, &rReq.User.Id, &stream)
 	if err != nil {
 		return status.Error(codes.NotFound, err.Error())

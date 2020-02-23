@@ -7,6 +7,7 @@ import (
 	rd "ULZRoomService/pkg/store/redis"
 	pb "ULZRoomService/proto"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"sync"
@@ -43,9 +44,10 @@ func New(conf *cf.ConfTmp) *ULZRoomServiceBackend {
 	}
 
 	g := ULZRoomServiceBackend{
-		CoreKey: ck,
-		mu:      &sync.Mutex{},
-		redhdlr: rdfl,
+		CoreKey:    ck,
+		mu:         &sync.Mutex{},
+		redhdlr:    rdfl,
+		roomStream: make(map[string](*RoomStreamBox)),
 	}
 	// g.InitDB(&conf.Database)
 	return &g
@@ -86,6 +88,8 @@ func (rm *ULZRoomServiceBackend) GetStream(roomKey *string, userId *string) *pb.
 
 func (rm *ULZRoomServiceBackend) AddStream(roomKey *string, userId *string, stream *pb.RoomService_ServerBroadcastServer) (bool, error) {
 	// _, ok := rm.bc_stream[user_id]
+	fmt.Println("RoomService.AddStream")
+	fmt.Println(rm.roomStream)
 	a, ok := rm.roomStream[*roomKey]
 	if !ok {
 		return false, errors.New("ROOM_NOT_EXIST")

@@ -43,6 +43,9 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 			break
 		}
 	}
+	if req.CharCardNvn == 0 {
+		req.CharCardNvn = 1
+	}
 	rmTmp := pb.Room{
 		Key:              "Rm" + f,
 		Host:             req.Host,
@@ -53,6 +56,7 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 		CharCardLimitMin: req.CharCardLimitMin,
 		CharCardNvn:      req.CharCardNvn,
 	}
+
 	f = "Rm" + f
 
 	// Set Para
@@ -62,13 +66,14 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 	}
 
 	_, ok := this.roomStream[f]
-	if !ok {
+	if ok {
 		return nil, status.Error(codes.AlreadyExists, "ROOM_IS_EXIST")
 	}
 
 	rmStream := RoomStreamBox{
-		key:      f,
-		password: req.Password,
+		key:        f,
+		password:   req.Password,
+		clientConn: make(map[string]*pb.RoomService_ServerBroadcastServer),
 	}
 
 	this.roomStream[f] = &rmStream

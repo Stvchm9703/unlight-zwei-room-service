@@ -44,6 +44,7 @@ func (b *ULZRoomServiceBackend) GetRoomList(req *pb.RoomCreateReq, stream pb.Roo
 	// log.Println("list:", RmList)
 	// log.Println("typeof:", reflect.TypeOf(RmList))
 	var res_list []*string
+	log.Println("level0")
 
 	for v := range RmList {
 		if RmList[v].CharCardNvn == req.CharCardNvn &&
@@ -54,8 +55,10 @@ func (b *ULZRoomServiceBackend) GetRoomList(req *pb.RoomCreateReq, stream pb.Roo
 
 			res_list = append(res_list, (&RmList[v].Key))
 			stream.Send(RmList[v])
+			log.Println(RmList[v])
 		}
 	}
+	log.Println("level1")
 
 	for v := range RmList {
 		if RmList[v].CharCardNvn == req.CharCardNvn &&
@@ -70,9 +73,12 @@ func (b *ULZRoomServiceBackend) GetRoomList(req *pb.RoomCreateReq, stream pb.Roo
 			if !rtmp {
 				res_list = append(res_list, (&RmList[v].Key))
 				stream.Send(RmList[v])
+				log.Println(RmList[v])
 			}
 		}
 	}
+	log.Println("level2")
+
 	for v := range RmList {
 		if RmList[v].CharCardNvn == req.CharCardNvn {
 			rtmp := false
@@ -84,7 +90,22 @@ func (b *ULZRoomServiceBackend) GetRoomList(req *pb.RoomCreateReq, stream pb.Roo
 			if !rtmp {
 				res_list = append(res_list, (&RmList[v].Key))
 				stream.Send(RmList[v])
+				log.Println(RmList[v])
 			}
+		}
+	}
+	log.Println(RmList)
+	for v := range RmList {
+		rtmp := false
+		for k := range res_list {
+			if *res_list[k] == RmList[v].Key {
+				rtmp = true
+			}
+		}
+		if !rtmp {
+			res_list = append(res_list, (&RmList[v].Key))
+			stream.Send(RmList[v])
+			log.Println(RmList[v])
 		}
 	}
 	return nil

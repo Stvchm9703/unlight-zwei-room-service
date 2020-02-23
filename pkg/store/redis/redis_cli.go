@@ -365,7 +365,14 @@ func (rc *RdsCliBox) ListRem(optionKey ...*string) (*[]string, error) {
 func (rc *RdsCliBox) GetParaList(key *string) (*[]byte, error) {
 	rc.lock()
 	defer rc.unlock()
-	keystr := rc.CoreKey + "/_" + rc.Key + ".*" + *key + "*"
+	//!FIXME
+	keystr := ""
+	if key != nil {
+		keystr = rc.CoreKey + "/_" + rc.Key + ".*" + *key + "*"
+	} else {
+		keystr = rc.CoreKey + "/_" + rc.Key + ".*"
+	}
+
 	log.Println("Key-in:", keystr)
 	keys, err := rc.conn.Keys(keystr).Result()
 	if err != nil {
