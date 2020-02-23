@@ -1,6 +1,7 @@
 package serverCtl
 
 import (
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"encoding/json"
 	"log"
@@ -14,10 +15,11 @@ func (b *ULZRoomServiceBackend) GetRoomList(req *pb.RoomCreateReq, stream pb.Roo
 	b.mu.Lock()
 	start := time.Now()
 	wkbox := b.searchAliveClient()
+	cm.PrintReqLog(nil, "get-room-list", req)
 	defer func() {
 		wkbox.Preserve(false)
 		elapsed := time.Since(start)
-		log.Printf("Quit-Room took %s", elapsed)
+		log.Printf("get-Room-list took %s", elapsed)
 		b.mu.Unlock()
 	}()
 	// var tmp pb.Room

@@ -1,6 +1,7 @@
 package serverCtl
 
 import (
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
 	"log"
@@ -16,11 +17,13 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 	start := time.Now()
 	b.mu.Lock()
 	wkbox := b.searchAliveClient()
+	cm.PrintReqLog(ctx, "update-room", req)
+
 	defer func() {
 		wkbox.Preserve(false)
 		b.mu.Unlock()
 		elapsed := time.Since(start)
-		log.Printf("Quit-Room took %s", elapsed)
+		log.Printf("update-Room took %s", elapsed)
 	}()
 	var room pb.Room
 	_, err := wkbox.GetPara(&req.Key, &room)

@@ -1,2 +1,1 @@
-go run build_cli\room_status.go start -c=config.yaml 
-
+go run build_cli\room_status.go start -c=config.yaml  -m="test"

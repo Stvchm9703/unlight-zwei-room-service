@@ -16,6 +16,7 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 	start := time.Now()
 	b.mu.Lock()
 	wkbox := b.searchAliveClient()
+	cm.PrintReqLog(ctx, "quit-room", req)
 	defer func() {
 		wkbox.Preserve(false)
 		b.mu.Unlock()

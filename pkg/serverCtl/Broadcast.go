@@ -14,7 +14,7 @@ import (
 )
 
 func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.RoomService_ServerBroadcastServer) error {
-	log.Println("\nServer Broadcast Connect\n methods: ServerBroadcast")
+	cm.PrintReqLog(nil, "server-broadcast", rReq)
 	_, err := this.AddStream(&rReq.Key, &rReq.User.Id, &stream)
 	if err != nil {
 		return status.Error(codes.NotFound, err.Error())
@@ -35,6 +35,7 @@ func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.R
 }
 
 func (this *ULZRoomServiceBackend) SendMessage(ctx context.Context, msg *pb.RoomMsg) (*pb.Empty, error) {
+	cm.PrintReqLog(ctx, "send-message", msg)
 	this.BroadCast(&msg.Key, &msg.FormId, msg)
 	return &pb.Empty{}, nil
 }

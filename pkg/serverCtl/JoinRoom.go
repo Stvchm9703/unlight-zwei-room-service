@@ -1,6 +1,7 @@
 package serverCtl
 
 import (
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
 	"log"
@@ -15,11 +16,12 @@ func (b *ULZRoomServiceBackend) JoinRoom(ctx context.Context, req *pb.RoomReq) (
 	start := time.Now()
 	b.mu.Lock()
 	wkbox := b.searchAliveClient()
+	cm.PrintReqLog(ctx, "join-room", req)
 	defer func() {
 		(wkbox).Preserve(false)
 		b.mu.Unlock()
 		elapsed := time.Since(start)
-		log.Printf("Quit-Room took %s", elapsed)
+		log.Printf("join-Room took %s", elapsed)
 	}()
 
 	var tmp pb.Room
