@@ -278,6 +278,9 @@ func (rc *RdsCliBox) GetPara(key *string, target interface{}) (*interface{}, err
 
 	// } else if rc.MarshalMethods == meth_proto {
 	// 	proto.Unmarshal(res, target)
+	// } else{
+	// 	target = res
+	// }
 
 	return &target, nil
 }
