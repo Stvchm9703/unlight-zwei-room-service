@@ -119,7 +119,7 @@ func (rm *ULZRoomServiceBackend) DelStream(roomKey *string, userId *string) (boo
 
 func (rm *ULZRoomServiceBackend) BroadCast(roomkey *string, from *string, message *pb.RoomMsg) error {
 	log.Println("BS!", message)
-	log.Println(rm.roomStream[*roomkey])
+	log.Println(rm.roomStream[*roomkey].key)
 	rmb, ok := rm.roomStream[*roomkey]
 	if !ok {
 		log.Println("room not exist")
