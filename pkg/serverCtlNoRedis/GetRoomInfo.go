@@ -1,6 +1,7 @@
 package serverCtlNoRedis
 
 import (
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
 	"log"
@@ -14,6 +15,7 @@ import (
 func (b *ULZRoomServiceBackend) GetRoomInfo(ctx context.Context, req *pb.RoomReq) (*pb.Room, error) {
 	start := time.Now()
 	b.mu.Lock()
+	cm.PrintReqLog(ctx, "get-room", req)
 	defer func() {
 		b.mu.Unlock()
 		elapsed := time.Since(start)

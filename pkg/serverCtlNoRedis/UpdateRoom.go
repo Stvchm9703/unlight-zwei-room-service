@@ -1,6 +1,7 @@
 package serverCtlNoRedis
 
 import (
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
 	"log"
@@ -15,6 +16,7 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 	// return nil, status.Errorf(codes.Unimplemented, "method DeleteRoom not implemented")
 	start := time.Now()
 	b.mu.Lock()
+	cm.PrintReqLog(ctx, "update-room", req)
 	defer func() {
 		b.mu.Unlock()
 		elapsed := time.Since(start)
@@ -32,6 +34,6 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 	rmg.Room.CharCardNvn = req.CharCardNvn
 	rmg.Room.CharCardLimitMax = req.CharCardLimitMax
 	rmg.Room.CharCardLimitMin = req.CharCardLimitMin
-
+	b.BroadCast(&rmg.Key, &req.Host.Id, cm.MsgHostUpdateRoom(&rmg.Key, &rmg.Password))
 	return &rmg.Room, nil
 }

@@ -15,6 +15,7 @@ import (
 func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (*pb.Empty, error) {
 	start := time.Now()
 	b.mu.Lock()
+	cm.PrintReqLog(ctx, "quit-room", req)
 	defer func() {
 		b.mu.Unlock()
 		elapsed := time.Since(start)

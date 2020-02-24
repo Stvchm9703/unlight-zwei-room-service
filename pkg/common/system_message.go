@@ -35,3 +35,13 @@ func MsgUserQuitRoom(key *string, userId *string, username *string) *pb.RoomMsg 
 		MsgType: pb.RoomMsg_SYSTEM_INFO,
 	}
 }
+
+func MsgHostUpdateRoom(key *string, pw *string) *pb.RoomMsg {
+	return &pb.RoomMsg{
+		Key:     *key,
+		FromId:  "SYSTEM",
+		ToId:    "ALL_USER",
+		Message: fmt.Sprintf("UPDATE_ROOM:pw::%v", *pw),
+		MsgType: pb.RoomMsg_SYSTEM_INFO,
+	}
+}

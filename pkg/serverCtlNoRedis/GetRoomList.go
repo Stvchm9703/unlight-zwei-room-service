@@ -2,7 +2,9 @@ package serverCtlNoRedis
 
 import (
 	// cm "ULZRoomService/pkg/common"
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
+
 	// "context"
 	"log"
 	"time"
@@ -11,6 +13,8 @@ import (
 // GetRoomList :
 func (b *ULZRoomServiceBackend) GetRoomList(req *pb.RoomCreateReq, stream pb.RoomService_GetRoomListServer) error {
 	start := time.Now()
+	cm.PrintReqLog(nil, "get-room-list", req)
+
 	defer func() {
 		elapsed := time.Since(start)
 		log.Printf("Get-Room-List took %s", elapsed)
