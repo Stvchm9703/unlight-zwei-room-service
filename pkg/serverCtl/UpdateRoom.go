@@ -40,7 +40,7 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 	room.CharCardLimitMin = req.CharCardLimitMin
 	b.BroadCast(
 		&room.Key,
-		&req.Host.Id,
+		&room.Host.Id,
 		cm.MsgHostUpdateRoom(&room.Key, &room.Password))
 
 	wkbox.UpdatePara(&room.Key, room)
