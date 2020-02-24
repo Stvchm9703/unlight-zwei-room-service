@@ -46,12 +46,22 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 	if req.CharCardNvn == 0 {
 		req.CharCardNvn = 1
 	}
+	if req.CostLimitMax == 0 {
+		req.CostLimitMax = 200
+	}
+	if req.CharCardLimitMax == nil {
+		req.CharCardLimitMax = &pb.RmCharCardInfo{
+			Cost: 40,
+		}
+	}
 	rmTmp := pb.Room{
 		Key:              "Rm" + f,
 		Host:             req.Host,
 		Dueler:           nil,
 		Status:           pb.RoomStatus_ON_WAIT,
 		Turns:            0,
+		CostLimitMax:     req.CostLimitMax,
+		CostLimitMin:     req.CostLimitMin,
 		CharCardLimitMax: req.CharCardLimitMax,
 		CharCardLimitMin: req.CharCardLimitMin,
 		CharCardNvn:      req.CharCardNvn,
