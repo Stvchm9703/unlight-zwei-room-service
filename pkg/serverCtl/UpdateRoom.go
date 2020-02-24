@@ -28,7 +28,7 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 	var room pb.Room
 	_, err := wkbox.GetPara(&req.Key, &room)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
