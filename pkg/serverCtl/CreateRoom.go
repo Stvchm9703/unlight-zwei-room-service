@@ -56,6 +56,7 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 	}
 	rmTmp := pb.Room{
 		Key:              "Rm" + f,
+		Id:               f[0:5],
 		Host:             req.Host,
 		Dueler:           nil,
 		Status:           pb.RoomStatus_ON_WAIT,
