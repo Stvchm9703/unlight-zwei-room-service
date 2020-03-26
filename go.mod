@@ -4,6 +4,7 @@ go 1.13.1
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/gin-gonic/gin v1.6.1
 	github.com/go-redis/redis v6.15.6+incompatible
 	github.com/gogo/gateway v1.1.0
 	github.com/gogo/googleapis v1.3.0 // indirect
@@ -14,6 +15,7 @@ require (
 	github.com/golang/protobuf v1.3.3
 	github.com/google/flatbuffers v1.11.0
 	github.com/google/go-cmp v0.4.0 // indirect
+	github.com/gorilla/websocket v1.4.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway v1.13.0
 	github.com/micro/go-micro v1.16.0

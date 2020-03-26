@@ -34,6 +34,7 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 	rmg.Room.CharCardNvn = req.CharCardNvn
 	rmg.Room.CharCardLimitMax = req.CharCardLimitMax
 	rmg.Room.CharCardLimitMin = req.CharCardLimitMin
-	b.BroadCast(&rmg.Key, &req.Host.Id, cm.MsgHostUpdateRoom(&rmg.Key, &rmg.Password))
+	b.BroadCast(cm.MsgHostUpdateRoom(&rmg.Key, &rmg.Password))
+	// b.BroadCast(&rmg.Key, &req.Host.Id, cm.MsgHostUpdateRoom(&rmg.Key, &rmg.Password))
 	return &rmg.Room, nil
 }

@@ -46,6 +46,9 @@ func ServerMainProcess(testing_config *cf.ConfTmp) {
 	go func() {
 		panic(s.Serve(lis))
 	}()
+	go func() {
+		panic(RMServer.RunWebSocketServer(testing_config.APIServer))
+	}()
 	beforeGracefulStop(s, RMServer)
 
 	// call your cleanup method with this channel as a routine

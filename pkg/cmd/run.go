@@ -44,7 +44,7 @@ var runCmd = &cobra.Command{
 		} else if strings.Contains(runCMDInput.cfPath, ".yaml") {
 			configPoint, err = Cf.OpenYaml(runCMDInput.cfPath)
 		}
-		log.Println(configPoint)
+		log.Printf("config map : %#v \n", configPoint)
 		log.Println(runCMDInput.mode)
 
 		if err == nil {

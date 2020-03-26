@@ -32,13 +32,15 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 		return nil, status.Errorf(codes.NotFound, err.Error())
 	}
 
-	_, err := b.DelStream(&req.Key, &req.User.Id)
-	if err != nil {
-		log.Println(err)
-	}
+	// _, err := b.DelStream(&req.Key, &req.User.Id)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
 
 	// broadcast to room
-	b.BroadCast(&req.Key, &b.CoreKey,
+	// b.BroadCast(&req.Key, &b.CoreKey,
+	// 	cm.MsgUserQuitRoom(&req.Key, &req.User.Id, &req.User.Name))
+	b.BroadCast(
 		cm.MsgUserQuitRoom(&req.Key, &req.User.Id, &req.User.Name))
 
 	//
@@ -46,12 +48,15 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 	if tmp.Host.Id == req.User.Id {
 		tmp.Host = nil
 		// remove room stream
-		b.BroadCast(&req.Key, &b.CoreKey,
+		// b.BroadCast(&req.Key, &b.CoreKey,
+		// 	cm.MsgHostQuitRoom(&tmp.Key, &tmp.Id))
+		b.BroadCast(
 			cm.MsgHostQuitRoom(&tmp.Key, &tmp.Id))
-		a, _ := b.roomStream[req.Key]
-		a.ClearAll()
-		b.roomStream[req.Key] = nil
-		delete(b.roomStream, req.Key)
+
+		// a, _ := b.roomStream[req.Key]
+		// a.ClearAll()
+		// b.roomStream[req.Key] = nil
+		// delete(b.roomStream, req.Key)
 
 		// clean room memory
 		tmp.Status = pb.RoomStatus_ON_DESTROY

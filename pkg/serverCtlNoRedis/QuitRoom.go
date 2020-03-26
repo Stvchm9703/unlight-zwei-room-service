@@ -32,15 +32,18 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 		log.Println(err)
 	}
 	// broadcast to room
-	b.BroadCast(&req.Key, &b.CoreKey,
-		cm.MsgUserQuitRoom(&req.Key, &req.User.Id, &req.User.Name))
+	// b.BroadCast(&req.Key, &b.CoreKey,
+	// 	cm.MsgUserQuitRoom(&req.Key, &req.User.Id, &req.User.Name))
+	b.BroadCast(cm.MsgUserQuitRoom(&req.Key, &req.User.Id, &req.User.Name))
 
 	//
 	// edit room
 	if tmp.Room.Host.Id == req.User.Id {
 		// remove room stream
-		b.BroadCast(&req.Key, &b.CoreKey,
-			cm.MsgHostQuitRoom(&tmp.Room.Key, &req.User.Id))
+		// b.BroadCast(&req.Key, &b.CoreKey,
+		// 	cm.MsgHostQuitRoom(&tmp.Room.Key, &req.User.Id))
+		b.BroadCast(cm.MsgHostQuitRoom(&tmp.Room.Key, &req.User.Id))
+
 		tmp.ClearAll()
 		b.Roomlist[req.Key] = nil
 		delete(b.Roomlist, req.Key)
@@ -51,6 +54,6 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 	}
 
 	// return nil, errors.New("NotImplement")
-	return nil, nil
+	return &pb.Empty{}, nil
 
 }

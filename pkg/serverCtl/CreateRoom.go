@@ -76,18 +76,18 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	_, ok := this.roomStream[f]
-	if ok {
-		return nil, status.Error(codes.AlreadyExists, "ROOM_IS_EXIST")
-	}
+	// _, ok := this.roomStream[f]
+	// if ok {
+	// 	return nil, status.Error(codes.AlreadyExists, "ROOM_IS_EXIST")
+	// }
 
-	rmStream := RoomStreamBox{
-		key:        f,
-		password:   req.Password,
-		clientConn: make(map[string]*pb.RoomService_ServerBroadcastServer),
-	}
+	// rmStream := RoomStreamBox{
+	// 	key:        f,
+	// 	password:   req.Password,
+	// 	clientConn: make(map[string]*pb.RoomService_ServerBroadcastServer),
+	// }
 
-	this.roomStream[f] = &rmStream
+	// this.roomStream[f] = &rmStream
 
 	return &rmTmp, nil
 }

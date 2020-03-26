@@ -16,6 +16,7 @@ api_server:
   api_refer_type: proto
   api_table_filepath: "'./proto/','./'"
   api_outpath: "api/"
+  polling_port: 11020
 
 database:
   connector: postgres
