@@ -2,6 +2,7 @@ package redis
 
 import (
 	"ULZRoomService/pkg/config"
+	"fmt"
 
 	"encoding/json"
 	"log"
@@ -169,7 +170,7 @@ func (rc *RdsCliBox) register() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	log.Println("register-proc:", res, ":", str)
+	fmt.Printf("register-proc: %v : %v \n", res, str)
 
 	_, err = rc.conn.Set(redisCliPoolName+"-marshal-method", rc.MarshalMethods, redisCliSetTime).Result()
 	if err != nil {
@@ -216,7 +217,7 @@ func (rc *RdsCliBox) unregister() (bool, error) {
 		return false, err
 	}
 
-	log.Println("unreg-proc:", str)
+	fmt.Printf("unreg-proc: %v \n", str)
 	return true, nil
 }
 

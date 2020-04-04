@@ -47,7 +47,8 @@ func (this *ULZRoomServiceBackend) SendMessage(ctx context.Context, msg *pb.Room
 }
 
 func (this *ULZRoomServiceBackend) BroadCast(msg *pb.RoomMsg) {
-	// this.
+	this.castServer.Broadcast(msg)
+	return
 }
 
 func (rsb *ULZRoomServiceBackend) RunWebSocketServer(config cf.CfAPIServer) error {
@@ -56,7 +57,7 @@ func (rsb *ULZRoomServiceBackend) RunWebSocketServer(config cf.CfAPIServer) erro
 	router := gin.New()
 	router.GET("/:roomId", Wrapfunc(rsb, hub))
 	rsb.castServer = hub
-	return router.Run(config.IP + ":" + strconv.Itoa(config.PollingPort))
+	return router.Run(":" + strconv.Itoa(config.PollingPort))
 }
 
 // wraper to gin handler
@@ -81,7 +82,7 @@ func serveWs(rsb *ULZRoomServiceBackend, hub *ws.SocketHub, c *gin.Context) {
 	if _, err := wkbox.GetPara(&reqKey, &tmp); err != nil {
 		c.AbortWithStatus(412)
 	}
-	client := ws.NewClient(c.Param("roomId"), hub, conn)
+	client := ws.NewClient(reqKey, hub, conn)
 	go client.WritePump()
 	go client.ReadPump()
 }
