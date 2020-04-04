@@ -1,5 +1,5 @@
 syntax="proto3";
-import "common.proto";
+// import "common.proto";
 
 package ULZProto;
 option csharp_namespace         = "ULZAsset.ProtoMod";
@@ -121,9 +121,10 @@ message RoomCreateReq {
 }
 
 
-
-// message RoomListResp {
-//     repeated RoomSH         result                  = 1;
-//     ErrorMsg                error_msg               = 2;
-// }
-
+message RoomBroadcastInfo {
+    string                  key                     = 1;
+    string                  ip                      = 2;
+    int32                   port                    = 3;
+    string                  protocal                = 4;
+    bytes                   securl                  = 5;
+}
