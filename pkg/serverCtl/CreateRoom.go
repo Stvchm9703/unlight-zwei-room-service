@@ -89,5 +89,8 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 
 	// this.roomStream[f] = &rmStream
 
+	// !! Add the Socket hub for damn
+	// this.castServer
+
 	return &rmTmp, nil
 }

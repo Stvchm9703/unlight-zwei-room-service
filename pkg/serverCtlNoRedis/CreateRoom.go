@@ -54,11 +54,14 @@ func (this *ULZRoomServiceBackend) CreateRoom(ctx context.Context, req *pb.RoomC
 		CharCardLimitMin: req.CharCardLimitMin,
 		CharCardNvn:      req.CharCardNvn,
 	}
-	rmTmp1 := RoomMgr{
-		Room:       rmTmp,
-		clientConn: make(map[string]*pb.RoomService_ServerBroadcastServer),
-	}
+	// rmTmp1 := RoomMgr{
+	// 	Room:       rmTmp,
+	// 	clientConn: make(map[string]*pb.RoomService_ServerBroadcastServer),
+	// }
 	// !FIXME
-	this.Roomlist["Rm"+f] = &rmTmp1
+	// this.Roomlist["Rm"+f] = &rmTmp1
+
+	// !!Add the Scoket hub for damn
+	// this.castServer
 	return &rmTmp, nil
 }
