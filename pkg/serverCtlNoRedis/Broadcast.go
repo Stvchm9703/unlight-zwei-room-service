@@ -20,23 +20,11 @@ func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.R
 	// log.Println("\nServer Broadcast Connect\n methods: ServerBroadcast")
 	cm.PrintReqLog(nil, "server-broadcast", rReq)
 	return status.Error(codes.Internal, "SkipImpl")
-	// _, err := this.AddStream(&rReq.Key, &rReq.User.Id, &stream)
-	// if err != nil {
-	// 	return status.Error(codes.NotFound, err.Error())
-	// }
+}
 
-	// go func() {
-	// 	<-stream.Context().Done()
-	// 	log.Println("close done")
-	// 	_, err := this.DelStream(&rReq.Key, &rReq.User.Id)
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 	}
-	// 	this.BroadCast(&rReq.Key, &rReq.User.Id,
-	// 		cm.MsgUserQuitRoom(&rReq.Key, &rReq.User.Id, &rReq.User.Name))
-	// }()
-	// for {
-	// }
+func (this *ULZRoomServiceBackend) BroadcastInfo(ctx context.Context, rReq *pb.RoomReq) (*pb.RoomBroadcastInfo, error) {
+	cm.PrintReqLog(nil, "server-broadcast", rReq)
+	return nil, status.Error(codes.Internal, "SkipImpl")
 }
 
 func (this *ULZRoomServiceBackend) SendMessage(ctx context.Context, msg *pb.RoomMsg) (*pb.Empty, error) {

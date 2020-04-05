@@ -39,11 +39,6 @@ func New(conf *cf.ConfTmp) *ULZRoomServiceBackend {
 func (this *ULZRoomServiceBackend) Shutdown() {
 	log.Println("in shtdown proc")
 	/// TODO: send closing msg to all client
-	for _, v := range this.Roomlist {
-		log.Println("Server OS.sigKill")
-		// v.BroadCast("RmSvrMgr", cm.MsgSystShutdown(v.Room.Key))
-		v.ClearAll()
-	}
-	// this.CloseDB()
+
 	log.Println("endof shutdown proc:", this.CoreKey)
 }

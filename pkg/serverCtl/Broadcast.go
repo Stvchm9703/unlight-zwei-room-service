@@ -18,26 +18,30 @@ import (
 	// "time"
 )
 
-func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.RoomService_ServerBroadcastServer) error {
-	cm.PrintReqLog(nil, "server-broadcast", rReq)
-	return status.Error(codes.Internal, "SkipStream")
-	// _, err := this.AddStream(&rReq.Key, &rReq.User.Id, &stream)
-	// if err != nil {
-	// 	return status.Error(codes.NotFound, err.Error())
-	// }
+var (
+	RunningConfig *cf.CfAPIServer
+)
 
-	// go func() {
-	// 	<-stream.Context().Done()
-	// 	log.Println("close done")
-	// 	_, err := this.DelStream(&rReq.Key, &rReq.User.Id)
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 	}
-	// 	this.BroadCast(&rReq.Key, &rReq.User.Id,
-	// 		cm.MsgUserQuitRoom(&rReq.Key, &rReq.User.Id, &rReq.User.Name))
-	// }()
-	// for {
-	// }
+func (this *ULZRoomServiceBackend) ServerBroadcast(rReq *pb.RoomReq, stream pb.RoomService_ServerBroadcastServer) error {
+	// log.Println("\nServer Broadcast Connect\n methods: ServerBroadcast")
+	cm.PrintReqLog(nil, "server-broadcast", rReq)
+	return status.Error(codes.Internal, "SkipImpl")
+}
+
+func (this *ULZRoomServiceBackend) BroadcastInfo(ctx context.Context, rReq *pb.RoomReq) (*pb.RoomBroadcastInfo, error) {
+	cm.PrintReqLog(nil, "server-broadcast", rReq)
+	var tmp pb.Room
+	wkbox := this.searchAliveClient()
+	if _, err := wkbox.GetPara(&rReq.Key, &tmp); err != nil {
+		return nil, status.Error(codes.NotFound, "not exist")
+	}
+	return &pb.RoomBroadcastInfo{
+		Key:      rReq.Key,
+		Ip:       RunningConfig.IP,
+		Port:     int32(RunningConfig.PollingPort),
+		Protocal: "ws",
+		Securl:   nil,
+	}, nil
 }
 
 func (this *ULZRoomServiceBackend) SendMessage(ctx context.Context, msg *pb.RoomMsg) (*pb.Empty, error) {
@@ -57,6 +61,7 @@ func (rsb *ULZRoomServiceBackend) RunWebSocketServer(config cf.CfAPIServer) erro
 	router := gin.New()
 	router.GET("/:roomId", Wrapfunc(rsb, hub))
 	rsb.castServer = hub
+	RunningConfig = &config
 	return router.Run(":" + strconv.Itoa(config.PollingPort))
 }
 

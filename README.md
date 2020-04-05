@@ -6,7 +6,7 @@
 
 # protoc for golang
 ```
-protoc -I .\pkg\protos\ .\pkg\protos\*.proto  --go_out=plugins=grpc:.\pkg
+protoc -I=.\proto\ .\proto\*.proto  --go_out=plugins=grpc:.\proto
 ```
 
 ===

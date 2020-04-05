@@ -1,15 +1,9 @@
 package serverCtl
 
-import (
-	cm "ULZRoomService/pkg/common"
-	pb "ULZRoomService/proto"
-	"log"
-)
-
 type RoomStreamBox struct {
-	key        string
-	password   string
-	clientConn map[string]*pb.RoomService_ServerBroadcastServer
+	key      string
+	password string
+	// clientConn map[string]*pb.RoomService_ServerBroadcastServer
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -74,14 +68,14 @@ type RoomStreamBox struct {
 // ---------------------------------------------------------------------------------------------
 // RoomStreamBox Controlling
 
-func (rm *RoomStreamBox) ClearAll() {
-	log.Println("ClearAll Proc")
-	for _, vc := range rm.clientConn {
-		(*vc).Send(cm.MsgSystShutdown(&rm.key))
-	}
-	for k := range rm.clientConn {
-		*(rm.clientConn[k]) = nil
-		delete(rm.clientConn, k)
-	}
-	return
-}
+// func (rm *RoomStreamBox) ClearAll() {
+// 	log.Println("ClearAll Proc")
+// 	for _, vc := range rm.clientConn {
+// 		(*vc).Send(cm.MsgSystShutdown(&rm.key))
+// 	}
+// 	for k := range rm.clientConn {
+// 		*(rm.clientConn[k]) = nil
+// 		delete(rm.clientConn, k)
+// 	}
+// 	return
+// }
