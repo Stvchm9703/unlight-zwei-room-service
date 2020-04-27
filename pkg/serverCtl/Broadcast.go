@@ -9,9 +9,9 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gogo/protobuf/proto"
 	"github.com/gogo/status"
 
 	"google.golang.org/grpc/codes"
@@ -50,20 +50,25 @@ func (this *ULZRoomServiceBackend) SendMessage(ctx context.Context, msg *pb.Room
 	return &pb.Empty{}, nil
 }
 
-func (this *ULZRoomServiceBackend) BroadCast(msg *pb.RoomMsg) {
-	this.castServer.Broadcast(msg)
-	return
+func (this *ULZRoomServiceBackend) BroadCast(msg *pb.RoomMsg) error {
+	// this.castServer.Broadcast(msg)
+	msgpt, err := proto.Marshal(msg)
+	if err != nil {
+		return err
+	}
+	this.natscli.Publish(this.ServiceName()+"/"+msg.Key, msgpt)
+	return nil
 }
 
-func (rsb *ULZRoomServiceBackend) RunWebSocketServer(config cf.CfAPIServer) error {
-	hub := ws.NewHub()
-	go hub.Run()
-	router := gin.New()
-	router.GET("/:roomId", Wrapfunc(rsb, hub))
-	rsb.castServer = hub
-	RunningConfig = &config
-	return router.Run(":" + strconv.Itoa(config.PollingPort))
-}
+// func (rsb *ULZRoomServiceBackend) RunWebSocketServer(config cf.CfAPIServer) error {
+// 	hub := ws.NewHub()
+// 	go hub.Run()
+// 	router := gin.New()
+// 	router.GET("/:roomId", Wrapfunc(rsb, hub))
+// 	rsb.castServer = hub
+// 	RunningConfig = &config
+// 	return router.Run(":" + strconv.Itoa(config.PollingPort))
+// }
 
 // wraper to gin handler
 func Wrapfunc(rsb *ULZRoomServiceBackend, hub *ws.SocketHub) gin.HandlerFunc {

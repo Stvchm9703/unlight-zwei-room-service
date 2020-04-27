@@ -5,12 +5,14 @@ import (
 	cm "ULZRoomService/pkg/common"
 	cf "ULZRoomService/pkg/config"
 	rd "ULZRoomService/pkg/store/redis"
-	ws "ULZRoomService/pkg/websocket"
 	pb "ULZRoomService/proto"
+	"fmt"
 	"log"
 	"strconv"
 	"sync"
 	"time"
+
+	nats "github.com/nats-io/nats.go"
 	// ants "github.com/panjf2000/ants/v2"
 )
 
@@ -24,7 +26,12 @@ type ULZRoomServiceBackend struct {
 	CoreKey string
 	redhdlr []*rd.RdsCliBox
 	// roomStream map[string](*RoomStreamBox)
-	castServer *ws.SocketHub
+	natscli *nats.Conn
+	// castServer *ws.SocketHub
+}
+
+func (this *ULZRoomServiceBackend) ServiceName() string {
+	return "ULZ.RmSvc"
 }
 
 // New : Create new backend
@@ -42,15 +49,23 @@ func New(conf *cf.ConfTmp) *ULZRoomServiceBackend {
 			rdfl = append(rdfl, rdf)
 		}
 	}
-
-	// wsWorker := ws.New()
+	sd := nats.Options{
+		Url:            fmt.Sprintf("%s://%s:%v", conf.NatsConn.ConnType, conf.NatsConn.IP, conf.NatsConn.Port),
+		AllowReconnect: true,
+		MaxReconnect:   10,
+		ReconnectWait:  5 * time.Second,
+		Timeout:        1 * time.Second,
+	}
+	nc, err := sd.Connect()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	g := ULZRoomServiceBackend{
 		CoreKey: ck,
 		mu:      &sync.Mutex{},
 		redhdlr: rdfl,
-		// roomStream: make(map[string](*RoomStreamBox)),
-		castServer: ws.NewHub(),
+		natscli: nc,
 	}
 	// g.InitDB(&conf.Database)
 	return &g

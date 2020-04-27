@@ -20,6 +20,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.13.0
 	github.com/micro/go-micro v1.16.0
 	github.com/mwitkow/go-proto-validators v0.3.0
+	github.com/nats-io/nats.go v1.8.1
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/rakyll/statik v0.1.6
