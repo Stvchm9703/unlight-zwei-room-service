@@ -36,7 +36,7 @@ func (this *ULZRoomServiceBackend) ServiceName() string {
 
 // New : Create new backend
 func New(conf *cf.ConfTmp) *ULZRoomServiceBackend {
-	ck := "ULZ.RmSvc" + cm.HashText(conf.APIServer.IP)
+	ck := "ULZ.RmSvc." + cm.HashText(conf.APIServer.IP+time.Now().String())
 	rdfl := []*rd.RdsCliBox{}
 	for i := 0; i < conf.CacheDb.WorkerNode; i++ {
 		rdf := rd.New(ck, "wKU"+cm.HashText("num"+strconv.Itoa(i)))
@@ -50,7 +50,7 @@ func New(conf *cf.ConfTmp) *ULZRoomServiceBackend {
 		}
 	}
 	sd := nats.Options{
-		Url:            fmt.Sprintf("%s://%s:%v", conf.NatsConn.ConnType, conf.NatsConn.IP, conf.NatsConn.Port),
+		Url:            fmt.Sprintf("%s://%s:%v", conf.NatsConn.Connector, conf.NatsConn.Host, conf.NatsConn.Port),
 		AllowReconnect: true,
 		MaxReconnect:   10,
 		ReconnectWait:  5 * time.Second,
@@ -86,6 +86,7 @@ func (this *ULZRoomServiceBackend) Shutdown() {
 			log.Println(e)
 		}
 	}
+	this.natscli.Close()
 	// this.CloseDB()
 	log.Println("endof shutdown proc:", this.CoreKey)
 }
