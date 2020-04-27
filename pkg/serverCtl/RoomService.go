@@ -36,7 +36,7 @@ func (this *ULZRoomServiceBackend) ServiceName() string {
 
 // New : Create new backend
 func New(conf *cf.ConfTmp) *ULZRoomServiceBackend {
-	ck := "RSCore" + cm.HashText(conf.APIServer.IP)
+	ck := "ULZ.RmSvc" + cm.HashText(conf.APIServer.IP)
 	rdfl := []*rd.RdsCliBox{}
 	for i := 0; i < conf.CacheDb.WorkerNode; i++ {
 		rdf := rd.New(ck, "wKU"+cm.HashText("num"+strconv.Itoa(i)))
