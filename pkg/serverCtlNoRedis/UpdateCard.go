@@ -8,8 +8,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/gogo/status"
-	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc/codes"
 )
 
@@ -47,14 +47,17 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 		tmp.HostCardlevel = req.Level
 	}
 
-	go b.BroadCast(&pb.RoomMsg{
-		Key:     req.Key,
-		FromId:  req.Side.String(),
-		FmName:  req.Side.String(),
-		ToId:    "All_USER",
-		ToName:  "All_USER",
-		MsgType: pb.RoomMsg_SYSTEM_INFO,
-		Message: fmt.Sprintf("CardChange::%s", proto.MarshalTextString(req)),
-	})
+	go func() {
+		byts, _ := proto.Marshal(req)
+		b.BroadCast(&pb.RoomMsg{
+			Key:     req.Key,
+			FromId:  req.Side.String(),
+			FmName:  req.Side.String(),
+			ToId:    "All_USER",
+			ToName:  "All_USER",
+			MsgType: pb.RoomMsg_SYSTEM_INFO,
+			Message: fmt.Sprintf("CardChange::%s", string(byts)),
+		})
+	}()
 	return &pb.Empty{}, nil
 }
