@@ -2,7 +2,6 @@ package common
 
 import (
 	pb "ULZRoomService/proto"
-	"encoding/json"
 	"fmt"
 )
 
@@ -37,13 +36,12 @@ func MsgUserQuitRoom(key *string, userId *string, username *string) *pb.RoomMsg 
 	}
 }
 
-func MsgHostUpdateRoom(key *string, pw *pb.Room) *pb.RoomMsg {
-	jsonstr, _ := json.Marshal(pw)
+func MsgHostUpdateRoom(key *string, pw *string) *pb.RoomMsg {
 	return &pb.RoomMsg{
 		Key:     *key,
 		FromId:  "SYSTEM",
 		ToId:    "ALL_USER",
-		Message: fmt.Sprintf("UPDATE_ROOM:pw::%s", string(jsonstr)),
+		Message: fmt.Sprintf("UPDATE_ROOM:pw::%v", *pw),
 		MsgType: pb.RoomMsg_SYSTEM_INFO,
 	}
 }
