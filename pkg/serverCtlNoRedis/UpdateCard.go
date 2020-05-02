@@ -4,6 +4,7 @@ import (
 	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -52,7 +53,7 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 		FmName:  req.Side.String(),
 		ToId:    "All",
 		ToName:  "All",
-		Message: proto.MarshalTextString(req),
+		Message: fmt.Sprintf("CardChange::%s", proto.MarshalTextString(req)),
 	})
 	return &pb.Empty{}, nil
 }

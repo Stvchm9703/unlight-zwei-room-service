@@ -43,14 +43,14 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 	}
 
 	go func() {
-		byts, _ := proto.Marshal(req)
+		// byts, _ := proto.Marshal(req)
 		b.BroadCast(&pb.RoomMsg{
 			Key:     req.Key,
 			FromId:  req.Side.String(),
 			FmName:  req.Side.String(),
 			ToId:    "All",
 			ToName:  "All",
-			Message: fmt.Sprintf("CardChange::%s", string(byts)),
+			Message: fmt.Sprintf("CardChange::%s", proto.MarshalTextString(req)),
 		})
 	}()
 	wkbox.SetPara(&req.Key, &tmp)
