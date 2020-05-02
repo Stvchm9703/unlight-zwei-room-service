@@ -20,10 +20,10 @@
 	#
 	# proto/example.proto is the location of the protofile we use.
 
+LOGPATH = ./.log
+LOGFILE = $(LOGPATH)/$(shell date --iso=seconds).log
 test_run:
-	LOGPATH = ./.log/
-	LOGFILE = $(LOGPATH)/$(shell date --iso=seconds).log
-	go run ./build_cli/room_status.go start -c=config.test_server.yaml -m=test > LOGFILE 2>&1 &
+	go run ./build_cli/room_status.go start -c=config.test_server.yaml -m=test > $(LOGFILE) 2>&1 &
 
 generate:
 	protoc \
