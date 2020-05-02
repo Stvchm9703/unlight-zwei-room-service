@@ -4,11 +4,11 @@ import (
 	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/gogo/status"
 	"google.golang.org/grpc/codes"
 )
@@ -43,6 +43,7 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 	}
 
 	go func() {
+		jsonstr, _ := json.Marshal(req)
 		b.BroadCast(&pb.RoomMsg{
 			Key:     req.Key,
 			FromId:  req.Side.String(),
@@ -50,7 +51,7 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 			ToId:    "All",
 			ToName:  "All",
 			MsgType: pb.RoomMsg_SYSTEM_INFO,
-			Message: fmt.Sprintf("CardChange::%s", proto.MarshalTextString(req)),
+			Message: fmt.Sprintf("CardChange::%s", string(jsonstr)),
 		})
 	}()
 	wkbox.SetPara(&req.Key, &tmp)
