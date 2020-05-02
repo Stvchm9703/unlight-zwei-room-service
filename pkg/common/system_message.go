@@ -39,12 +39,11 @@ func MsgUserQuitRoom(key *string, userId *string, username *string) *pb.RoomMsg 
 }
 
 func MsgHostUpdateRoom(key *string, pw *pb.Room) *pb.RoomMsg {
-	rmInfo, _ := proto.MarshalMessageSetJSON(pw)
 	return &pb.RoomMsg{
 		Key:     *key,
 		FromId:  "SYSTEM",
 		ToId:    "ALL_USER",
-		Message: fmt.Sprintf("UPDATE_ROOM:pw::%s", string(rmInfo)),
+		Message: fmt.Sprintf("UPDATE_ROOM:pw::%s", proto.MarshalTextString(pw)),
 		MsgType: pb.RoomMsg_SYSTEM_INFO,
 	}
 }
