@@ -50,6 +50,7 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 			FmName:  req.Side.String(),
 			ToId:    "All",
 			ToName:  "All",
+			MsgType: pb.RoomMsg_SYSTEM_INFO,
 			Message: fmt.Sprintf("CardChange::%s", proto.MarshalTextString(req)),
 		})
 	}()
