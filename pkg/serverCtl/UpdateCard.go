@@ -37,13 +37,13 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 		tmp.HostCardsetId = req.CardsetId
 		tmp.HostCardlevel = req.Level
 	} else {
-		tmp.HostCharcardId = req.CharcardId
-		tmp.HostCardsetId = req.CardsetId
-		tmp.HostCardlevel = req.Level
+		tmp.DuelCharcardId = req.CharcardId
+		tmp.DuelCardsetId = req.CardsetId
+		tmp.DuelCardlevel = req.Level
 	}
 
 	go func() {
-		byts, _ := proto.Marshal(req)
+		byts, _ := proto.MarshalMessageSetJSON(req)
 		b.BroadCast(&pb.RoomMsg{
 			Key:     req.Key,
 			FromId:  req.Side.String(),

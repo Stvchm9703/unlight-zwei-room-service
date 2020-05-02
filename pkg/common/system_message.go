@@ -39,7 +39,7 @@ func MsgUserQuitRoom(key *string, userId *string, username *string) *pb.RoomMsg 
 }
 
 func MsgHostUpdateRoom(key *string, pw *pb.Room) *pb.RoomMsg {
-	rmInfo, _ := proto.Marshal(pw)
+	rmInfo, _ := proto.MarshalMessageSetJSON(pw)
 	return &pb.RoomMsg{
 		Key:     *key,
 		FromId:  "SYSTEM",
