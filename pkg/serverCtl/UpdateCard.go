@@ -1,6 +1,7 @@
 package serverCtl
 
 import (
+	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
 	"fmt"
@@ -16,11 +17,12 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 
 	start := time.Now()
 	b.mu.Lock()
+	cm.PrintReqLog(ctx, "update-card", req)
 	wkbox := b.searchAliveClient()
 	defer func() {
 		b.mu.Unlock()
 		elapsed := time.Since(start)
-		log.Printf("Get-Room took %s", elapsed)
+		log.Printf("Update-Card took %s", elapsed)
 		(wkbox).Preserve(false)
 	}()
 
@@ -52,9 +54,5 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 		})
 	}()
 	wkbox.SetPara(&req.Key, &tmp)
-	// if tmp.Password != "" && tmp.Password != req.Password {
-	// 	return nil, status.Error(codes.PermissionDenied, "ROOM_PASSWORD_INV")
-	// }
-
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateCard not implemented")
+	return &pb.Empty{}, nil
 }

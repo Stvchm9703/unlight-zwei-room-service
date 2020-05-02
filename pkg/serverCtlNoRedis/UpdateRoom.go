@@ -20,7 +20,7 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 	defer func() {
 		b.mu.Unlock()
 		elapsed := time.Since(start)
-		log.Printf("Quit-Room took %s", elapsed)
+		log.Printf("update-Room took %s", elapsed)
 	}()
 
 	rmg, ok := b.Roomlist[req.Key]

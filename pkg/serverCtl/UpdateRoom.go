@@ -18,7 +18,6 @@ func (b *ULZRoomServiceBackend) UpdateRoom(ctx context.Context, req *pb.RoomCrea
 	b.mu.Lock()
 	wkbox := b.searchAliveClient()
 	cm.PrintReqLog(ctx, "update-room", req)
-
 	defer func() {
 		wkbox.Preserve(false)
 		b.mu.Unlock()
