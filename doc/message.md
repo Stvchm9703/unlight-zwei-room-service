@@ -40,12 +40,12 @@ RmCharCardInfo
      Basic Character Card Infomation
 
 
-| Field   | Type            | Label | Description |
-| ------- | --------------- | ----- | ----------- |
-| card_id | [int32](#int32) |       |             |
-| level   | [int32](#int32) |       |             |
-| rare    | [int32](#int32) |       |             |
-| cost    | [int32](#int32) |       |             |
+| Field   | Type            | Label    | Description                                            |
+| ------- | --------------- | -------- | ------------------------------------------------------ |
+| card_id | [int32](#int32) | optional | the character card's id, for example abanned card list |
+| level   | [int32](#int32) | optional | the character card's level                             |
+| rare    | [int32](#int32) | optional | the character card's rare                              |
+| cost    | [int32](#int32) | optional | the character card's cost                              |
 
 
 
