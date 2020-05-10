@@ -41,6 +41,7 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 		tmp.DuelCardsetId = req.CardsetId
 		tmp.DuelCardlevel = req.Level
 	}
+	wkbox.SetPara(&req.Key, tmp)
 
 	go func() {
 		jsonstr, _ := json.Marshal(req)
@@ -54,6 +55,6 @@ func (b *ULZRoomServiceBackend) UpdateCard(ctx context.Context, req *pb.RoomUpda
 			Message: fmt.Sprintf("CardChange::%s", string(jsonstr)),
 		})
 	}()
-	wkbox.SetPara(&req.Key, &tmp)
+
 	return &pb.Empty{}, nil
 }

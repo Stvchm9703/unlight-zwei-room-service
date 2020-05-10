@@ -114,6 +114,9 @@ build_docker:
 	# docker build -t ulz-room-service .
 	docker-compose build 
 
+build_doc_message :
+	protoc --doc_out=./doc --doc_opt=markdown,message.md proto/message.proto
 
-
+build_doc_service :
+	protoc --doc_out=./doc --doc_opt=markdown,service.md proto/service.proto
 	
