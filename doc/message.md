@@ -82,8 +82,8 @@ Room Detail Information, the data structure for storing
 
 | Field               | Type                                       | Label | Description                                                                 |
 | ------------------- | ------------------------------------------ | ----- | --------------------------------------------------------------------------- |
-| id                  | [string](#string)                          |       | Room-id the id                                                              |
-| key                 | [string](#string)                          |       | Room-Key the simply id                                                      |
+| id                  | [string](#string)                          |       | Room-id the simply  read-able id                                            |
+| key                 | [string](#string)                          |       | Room-Key the id                                                             |
 | password            | [string](#string)                          |       | Room Password                                                               |
 | host                | [RmUserInfo](#ULZProto.RmUserInfo)         |       | User-info for room-host player                                              |
 | dueler              | [RmUserInfo](#ULZProto.RmUserInfo)         |       | User-info for dueler-player                                                 |
