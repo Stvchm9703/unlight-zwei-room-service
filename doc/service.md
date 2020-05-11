@@ -16,7 +16,12 @@
       - [Update Room](#update-room)
       - [Workflow](#workflow-1)
       - [Update Card](#update-card)
+      - [Workflow](#workflow-2)
       - [Send Message](#send-message)
+        - [WorkFlow](#workflow-3)
+      - [QuitRoom](#quitroom)
+        - [WorkFlow](#workflow-4)
+      - [JoinRoom](#joinroom)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -161,10 +166,11 @@ participant Rds as Redis
   RS -->> Rds: Set Room by Room key
   Rds -->> RS: Complete Update
   opt Redis execution error
-    RS ->> GC: return Error (code = Internal) 
+    Rds -->> RS: Fail Update
+    RS -->> GC: return Error (code = Internal) 
   end
   
-  par return 
+  par return the result to request-client (Host player)
     RS -->> GC: return Room-info ( Room )  
   and broadcast to other client
     RS ->> OGC: broadcast via NAT-message system
@@ -173,7 +179,169 @@ participant Rds as Redis
 
 #### Update Card 
 For both player to update the Character Card.
+#### Workflow
+```mermaid 
+sequenceDiagram 
+participant OGC as Other Game Client
+participant GC as Game Client
+participant RS as Room Service
+participant Rds as Redis
+
+  GC -->> RS: UpdateRoom ( RoomUpdateCardReq )
+
+  RS -->> Rds: Get Room by Room key
+  Rds -->> RS: return room 
+  opt Redis execution error
+    RS -->> GC: return Error (code = Not Found) 
+  end
+
+  opt password invild 
+    RS -->> GC: return Error (permission denied)
+  end
+
+  Note over GC,Rds : password is vaild or public open room 
+
+  RS -->> RS: Set Parameter from RoomUpdateCardReq to Fetched Room
+  
+  RS -->> Rds: Set Room by Room key
+
+  Rds -->> RS: Complete Update
+  opt Redis execution error
+    Rds -->> RS: Fail Update
+    RS ->> GC: return Error (code = Internal) 
+  end
+  
+  par return the complete status to request-client (Host player)
+    RS -->> GC: return Empty ( Empty )  
+  and broadcast to all client
+    RS ->> OGC: broadcast via NAT-message system
+    RS ->> OGC: broadcast via NAT-message system
+  end
+```
 
 #### Send Message 
 sending the command / broadcast message
 
+##### WorkFlow 
+```mermaid 
+sequenceDiagram 
+participant OGC as Other Game Client
+participant GC as Game Client
+participant RS as Room Service
+
+  GC -->> RS: SendMessage ( RoomUpdateCardReq )
+
+  RS ->> OGC: broadcast message via NAT-message system
+  RS ->> GC: broadcast message via NAT-message system
+  RS ->> GC: return complete status (empty)
+
+```
+
+#### QuitRoom 
+Player / Watcher quiting the game room.
+- broadcast who leaving the room, and unregister from NAT-message system(if it is needed)
+- if it is host player, the game room is set as \[ON_DESTROY\], so unable other player to join this room.
+- if it is dueler player, the game room is set as \[ON_WAIT\], so other player is able to join the game as dueler player.
+
+##### WorkFlow 
+```mermaid 
+sequenceDiagram 
+participant OGC as Other Game Client
+participant GC as Game Client
+participant RS as Room Service
+participant Rds as Redis
+
+  GC -->> RS: QuitRoom ( RoomReq )
+
+  RS -->> Rds: Get Room by Room key
+  Rds -->> RS: return room 
+
+  opt Redis execution error
+    RS -->> GC: return Error (code = Not Found) 
+  end
+
+  Note over GC,Rds : check passwrod is vaild 
+  opt password invild 
+    RS -->> GC: return Error (permission denied)
+  end
+
+  Note over GC,Rds : password is vaild or public open room 
+
+  RS ->> OGC: broadcast "player quiting" system message via NAT-message system
+
+  alt the player is Host player 
+    RS -->> OGC: broadcast "Host Quit Room" system message via NAT-message system
+  
+    RS -->> RS: Set Room's Status as [ON_DESTROY] 
+
+    RS -->> Rds: Set Room into Redis
+    Rds -->> RS: Complete Status 
+    opt Redis execution error
+        Rds -->> RS: Fail Update
+        RS ->> GC: return Error (code = Internal) 
+      end
+  else the player is Dueler player
+    RS -->> RS: Set Room's Dueler as [Null]  
+    RS -->> RS: Set Room's Status as [ON_Wait] 
+
+    RS -->> Rds: Set Room into Redis
+    Rds -->> RS: Complete Status 
+    opt Redis execution error
+      Rds -->> RS: Fail Update
+      RS ->> GC: return Error (code = Internal) 
+    end
+  end
+
+  RS ->> GC: return Complete status  
+
+```
+
+
+
+#### JoinRoom
+To allow player to join to game room , \
+if the game room have dueler player, other player is rejected to join as dueler.
+
+```mermaid 
+sequenceDiagram 
+participant OGC as Other Game Client
+participant GC as Game Client
+participant RS as Room Service
+participant Rds as Redis
+
+  GC -->> RS: QuitRoom ( RoomReq )
+
+  RS -->> Rds: Get Room by Room key
+  Rds -->> RS: return room 
+  opt Redis execution error
+    RS -->> GC: return Error (code = Not Found) 
+  end
+
+  Note over GC,Rds : check passwrod is vaild 
+  opt password invild 
+    RS -->> GC: return Error (permission denied)
+  end
+
+  Note over GC,Rds : password is vaild or public open room 
+
+  alt the player is allowed to be duler player 
+    
+    RS -->> RS: Set Room's Dueler as income player 
+
+    RS -->> Rds: Set Room into Redis
+    Rds -->> RS: Complete Status 
+    opt Redis execution error
+        Rds -->> RS: Fail Update
+        RS ->> GC: return Error (code = Internal) 
+    end
+
+    RS -->> OGC: broadcast "DuelerJoinRoom" system message via NAT-message system
+  
+
+  else the player is Watcher
+     RS -->> OGC: broadcast "WatcherJoinRoom" system message via NAT-message system
+  end
+
+  RS ->> GC: return Complete status  
+
+```

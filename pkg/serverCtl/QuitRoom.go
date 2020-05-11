@@ -61,15 +61,15 @@ func (b *ULZRoomServiceBackend) QuitRoom(ctx context.Context, req *pb.RoomReq) (
 		// clean room memory
 		tmp.Status = pb.RoomStatus_ON_DESTROY
 		// it will wait watcher to remove
+		wkbox.UpdatePara(&req.Key, tmp)
 	} else if tmp.Dueler.Id == req.User.Id {
 		tmp.Dueler = nil
 		tmp.Status = pb.RoomStatus_ON_WAIT
 		// available for new player
-
+		wkbox.UpdatePara(&req.Key, tmp)
 	}
 
-	wkbox.UpdatePara(&req.Key, tmp)
 	// return nil, errors.New("NotImplement")
-	return nil, nil
+	return &pb.Empty{}, nil
 
 }

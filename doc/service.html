@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Protocol Documentation</title>
+
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+
+  <style>
+    .task-list-item {
+      list-style-type: none;
+    }
+
+    .task-list-item-checkbox {
+      margin-left: -20px;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+
+
+</head>
+
+<body class="vscode-light">
+  <h1 id="protocol-documentation">Protocol Documentation</h1>
+  <p><a name="top"></a></p>
+  <h2 id="table-of-contents">Table of Contents</h2>
+  <ul>
+    <li>
+      <p><a href="#protocol-documentation">Protocol Documentation</a></p>
+      <ul>
+        <li><a href="#table-of-contents">Table of Contents</a></li>
+        <li><a href="#serviceproto">service.proto</a>
+          <ul>
+            <li><a href="#roomservice">RoomService</a>
+              <ul>
+                <li><a href="#create-room">Create Room</a>
+                  <ul>
+                    <li><a href="#work-flow">Work Flow</a></li>
+                  </ul>
+                </li>
+                <li><a href="#get-room-list">Get Room List</a>
+                  <ul>
+                    <li><a href="#work-flow-1">Work Flow</a></li>
+                  </ul>
+                </li>
+                <li><a href="#get-room-info">Get Room Info</a></li>
+                <li><a href="#workflow">Workflow</a></li>
+                <li><a href="#update-room">Update Room</a></li>
+                <li><a href="#workflow-1">Workflow</a></li>
+                <li><a href="#update-card">Update Card</a></li>
+                <li><a href="#workflow-2">Workflow</a></li>
+                <li><a href="#send-message">Send Message</a>
+                  <ul>
+                    <li><a href="#workflow-3">WorkFlow</a></li>
+                  </ul>
+                </li>
+                <li><a href="#quitroom">QuitRoom</a>
+                  <ul>
+                    <li><a href="#workflow-4">WorkFlow</a></li>
+                  </ul>
+                </li>
+                <li><a href="#joinroom">JoinRoom</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p><a href="#scalar-value-types">Scalar Value Types</a></p>
+    </li>
+  </ul>
+  <p><a name="service.proto"></a></p>
+  <p align="right"><a href="#top">Top</a></p>
+  <h2 id="serviceproto">service.proto</h2>
+  <p><a name="ULZProto.RoomService"></a></p>
+  <h3 id="roomservice">RoomService</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Method Name</th>
+        <th>Request Type</th>
+        <th>Response Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>CreateRoom</td>
+        <td><a href="#ULZProto.RoomCreateReq">RoomCreateReq</a></td>
+        <td><a href="#ULZProto.Room">Room</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>GetRoomList</td>
+        <td><a href="#ULZProto.RoomCreateReq">RoomCreateReq</a></td>
+        <td><a href="#ULZProto.Room">Room</a> stream</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>GetRoomInfo</td>
+        <td><a href="#ULZProto.RoomReq">RoomReq</a></td>
+        <td><a href="#ULZProto.Room">Room</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>UpdateRoom</td>
+        <td><a href="#ULZProto.RoomCreateReq">RoomCreateReq</a></td>
+        <td><a href="#ULZProto.Room">Room</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>UpdateCard</td>
+        <td><a href="#ULZProto.RoomUpdateCardReq">RoomUpdateCardReq</a></td>
+        <td><a href="#ULZProto.Empty">Empty</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SendMessage</td>
+        <td><a href="#ULZProto.RoomMsg">RoomMsg</a></td>
+        <td><a href="#ULZProto.Empty">Empty</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>QuitRoom</td>
+        <td><a href="#ULZProto.RoomReq">RoomReq</a></td>
+        <td><a href="#ULZProto.Empty">Empty</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>QuickPair</td>
+        <td><a href="#ULZProto.RoomCreateReq">RoomCreateReq</a></td>
+        <td><a href="#ULZProto.Room">Room</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>JoinRoom</td>
+        <td><a href="#ULZProto.RoomReq">RoomReq</a></td>
+        <td><a href="#ULZProto.Room">Room</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4 id="create-room">Create Room</h4>
+  <p>Create the Game Room , including the limitation.</p>
+  <h5 id="work-flow">Work Flow</h5>
+  <pre><code class="language-mermaid"><code>
+      <div class="mermaid">sequenceDiagram
+participant GC as Game Client
+participant RS as Room Service
+participant Rds as Redis
+
+  GC --&gt;&gt; RS: CreatRoom( RoomCreateReq )
+
+  loop generate hash key
+    RS --&gt;&gt; Rds:  Check Room is Not exist
+    alt is Exist 
+      RS --&gt;&gt; RS: hash new room key
+    else Not Exist 
+      RS --&gt;&gt; Rds:  Set Room Data
+    end
+  end
+
+  RS --&gt;&gt; GC: RoomInfo ( Room )
+
+  opt Redis execution error
+    RS --&gt;&gt; GC: error (code.internal) 
+  end
+
+</div></code></code></pre>
+  <h4 id="get-room-list">Get Room List</h4>
+  <p>Fetch the Game Room with searching parameter.</p>
+  <h5 id="work-flow-1">Work Flow</h5>
+  <pre><code class="language-mermaid"><code><div class="mermaid">sequenceDiagram
+participant GC as Game Client
+participant RS as Room Service
+participant Rds as Redis
+
+  GC --&gt;&gt; RS: GetRoomList ( RoomCreateReq )
+
+  RS --&gt;&gt; Rds: Get Room list
+  Rds --&gt;&gt; RS: return full room list 
+
+  loop room in room list 
+    alt is similar 
+      RS --&gt;&gt; GC: return room 
+    end
+  end
+
+  opt Redis execution error
+    RS --&gt;&gt; GC: error (code.internal) 
+  end
+</div></code></code></pre>
+  <h4 id="get-room-info">Get Room Info</h4>
+  <p>get game room detail information.</p>
+  <h4 id="workflow">Workflow</h4>
+  <pre><code class="language-mermaid"><code><div class="mermaid">sequenceDiagram
+participant GC as Game Client
+participant RS as Room Service
+participant Rds as Redis
+
+  GC --&gt;&gt; RS: GetRoom ( RoomReq )
+
+  RS --&gt;&gt; Rds: Get Room by Room key
+  Rds --&gt;&gt; RS: return room 
+
+  opt Redis execution error
+    RS --&gt;&gt; GC: return Error (code = Not Found) 
+  end
+   
+  alt password is vaild
+    RS --&gt;&gt; GC: return Room-info ( Room )
+  else password invild 
+    RS --&gt;&gt; GC: return Error (permission denied)
+  else public open room 
+    RS --&gt;&gt; GC: return Room-info ( Room )
+  end
+  
+</div></code></code></pre>
+  <h4 id="update-room">Update Room</h4>
+  <p>For host player to update the limitation.</p>
+  <h4 id="workflow-1">Workflow</h4>
+  <pre><code class="language-mermaid"><code><div class="mermaid">sequenceDiagram 
+participant OGC as Other Game Client
+participant GC as Game Client
+participant RS as Room Service
+participant Rds as Redis
+
+  GC --&gt;&gt; RS: UpdateRoom ( RoomCreateReq )
+
+  RS --&gt;&gt; Rds: Get Room by Room key
+  Rds --&gt;&gt; RS: return room 
+  opt Redis execution error
+    RS --&gt;&gt; GC: return Error (code = Not Found) 
+  end
+
+  opt password invild 
+    RS --&gt;&gt; GC: return Error (permission denied)
+  end
+
+  Note over GC,Rds : password is vaild or public open room 
+
+  RS --&gt;&gt; RS: Set Parameter from RoomCreateReq to Fetched Room
+  
+  RS --&gt;&gt; Rds: Set Room by Room key
+  Rds --&gt;&gt; RS: Complete Update
+  opt Redis execution error
+    Rds --&gt;&gt; RS: Fail Update
+    RS --&gt;&gt; GC: return Error (code = Internal) 
+  end
+  
+  par return the result to request-client (Host player)
+    RS --&gt;&gt; GC: return Room-info ( Room )  
+  and broadcast to other client
+    RS -&gt;&gt; OGC: broadcast via NAT-message system
+  end
+</div></code></code></pre>
+  <h4 id="update-card">Update Card</h4>
+  <p>For both player to update the Character Card.</p>
+  <h4 id="workflow-2">Workflow</h4>
+  <pre><code class="language-mermaid"><code><div class="mermaid">sequenceDiagram 
+participant OGC as Other Game Client
+participant GC as Game Client
+participant RS as Room Service
+participant Rds as Redis
+
+  GC --&gt;&gt; RS: UpdateRoom ( RoomUpdateCardReq )
+
+  RS --&gt;&gt; Rds: Get Room by Room key
+  Rds --&gt;&gt; RS: return room 
+  opt Redis execution error
+    RS --&gt;&gt; GC: return Error (code = Not Found) 
+  end
+
+  opt password invild 
+    RS --&gt;&gt; GC: return Error (permission denied)
+  end
+
+  Note over GC,Rds : password is vaild or public open room 
+
+  RS --&gt;&gt; RS: Set Parameter from RoomUpdateCardReq to Fetched Room
+  
+  RS --&gt;&gt; Rds: Set Room by Room key
+
+  Rds --&gt;&gt; RS: Complete Update
+  opt Redis execution error
+    Rds --&gt;&gt; RS: Fail Update
+    RS -&gt;&gt; GC: return Error (code = Internal) 
+  end
+  
+  par return the complete status to request-client (Host player)
+    RS --&gt;&gt; GC: return Empty ( Empty )  
+  and broadcast to all client
+    RS -&gt;&gt; OGC: broadcast via NAT-message system
+    RS -&gt;&gt; OGC: broadcast via NAT-message system
+  end
+</div></code></code></pre>
+  <h4 id="send-message">Send Message</h4>
+  <p>sending the command / broadcast message</p>
+  <h5 id="workflow-3">WorkFlow</h5>
+  <pre><code class="language-mermaid"><code><div class="mermaid">sequenceDiagram 
+participant OGC as Other Game Client
+participant GC as Game Client
+participant RS as Room Service
+
+  GC --&gt;&gt; RS: SendMessage ( RoomUpdateCardReq )
+
+  RS -&gt;&gt; OGC: broadcast message via NAT-message system
+  RS -&gt;&gt; GC: broadcast message via NAT-message system
+  RS -&gt;&gt; GC: return complete status (empty)
+
+</div></code></code></pre>
+  <h4 id="quitroom">QuitRoom</h4>
+  <p>Player / Watcher quiting the game room.</p>
+  <ul>
+    <li>broadcast who leaving the room, and unregister from NAT-message system(if it is needed)</li>
+    <li>if it is host player, the game room is set as [ON_DESTROY], so unable other player to join this room.</li>
+    <li>if it is dueler player, the game room is set as [ON_WAIT], so other player is able to join the game as dueler
+      player.</li>
+  </ul>
+  <h5 id="workflow-4">WorkFlow</h5>
+  <pre><code class="language-mermaid"><code><div class="mermaid">sequenceDiagram 
+participant OGC as Other Game Client
+participant GC as Game Client
+participant RS as Room Service
+participant Rds as Redis
+
+  GC --&gt;&gt; RS: QuitRoom ( RoomReq )
+
+  RS --&gt;&gt; Rds: Get Room by Room key
+  Rds --&gt;&gt; RS: return room 
+
+  opt Redis execution error
+    RS --&gt;&gt; GC: return Error (code = Not Found) 
+  end
+
+  Note over GC,Rds : check passwrod is vaild 
+  opt password invild 
+    RS --&gt;&gt; GC: return Error (permission denied)
+  end
+
+  Note over GC,Rds : password is vaild or public open room 
+
+  RS -&gt;&gt; OGC: broadcast &quot;player quiting&quot; system message via NAT-message system
+
+  alt the player is Host player 
+    RS --&gt;&gt; OGC: broadcast &quot;Host Quit Room&quot; system message via NAT-message system
+  
+    RS --&gt;&gt; RS: Set Room's Status as [ON_DESTROY] 
+
+    RS --&gt;&gt; Rds: Set Room into Redis
+    Rds --&gt;&gt; RS: Complete Status 
+    opt Redis execution error
+        Rds --&gt;&gt; RS: Fail Update
+        RS -&gt;&gt; GC: return Error (code = Internal) 
+      end
+  else the player is Dueler player
+    RS --&gt;&gt; RS: Set Room's Dueler as [Null]  
+    RS --&gt;&gt; RS: Set Room's Status as [ON_Wait] 
+
+    RS --&gt;&gt; Rds: Set Room into Redis
+    Rds --&gt;&gt; RS: Complete Status 
+    opt Redis execution error
+      Rds --&gt;&gt; RS: Fail Update
+      RS -&gt;&gt; GC: return Error (code = Internal) 
+    end
+  end
+
+  RS -&gt;&gt; GC: return Complete status  
+
+</div></code></code></pre>
+  <h4 id="joinroom">JoinRoom</h4>
+  <p>To allow player to join to game room , <br>
+    if the game room have dueler player, other player is rejected to join as dueler.</p>
+  <pre><code class="language-mermaid"><code><div class="mermaid">sequenceDiagram 
+participant OGC as Other Game Client
+participant GC as Game Client
+participant RS as Room Service
+participant Rds as Redis
+
+  GC --&gt;&gt; RS: QuitRoom ( RoomReq )
+
+  RS --&gt;&gt; Rds: Get Room by Room key
+  Rds --&gt;&gt; RS: return room 
+  opt Redis execution error
+    RS --&gt;&gt; GC: return Error (code = Not Found) 
+  end
+
+  Note over GC,Rds : check passwrod is vaild 
+  opt password invild 
+    RS --&gt;&gt; GC: return Error (permission denied)
+  end
+
+  Note over GC,Rds : password is vaild or public open room 
+
+  alt the player is allowed to be duler player 
+    
+    RS --&gt;&gt; RS: Set Room's Dueler as income player 
+
+    RS --&gt;&gt; Rds: Set Room into Redis
+    Rds --&gt;&gt; RS: Complete Status 
+    opt Redis execution error
+        Rds --&gt;&gt; RS: Fail Update
+        RS -&gt;&gt; GC: return Error (code = Internal) 
+    end
+
+    RS --&gt;&gt; OGC: broadcast &quot;DuelerJoinRoom&quot; system message via NAT-message system
+  
+
+  else the player is Watcher
+     RS --&gt;&gt; OGC: broadcast &quot;WatcherJoinRoom&quot; system message via NAT-message system
+  end
+
+  RS -&gt;&gt; GC: return Complete status  
+
+</div></code></code></pre>
+<script src="mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+</body>
+
+</html>

@@ -4,6 +4,7 @@ import (
 	cm "ULZRoomService/pkg/common"
 	pb "ULZRoomService/proto"
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -30,9 +31,24 @@ func (b *ULZRoomServiceBackend) JoinRoom(ctx context.Context, req *pb.RoomReq) (
 	}
 	if tmp.Dueler == nil && req.IsDuel {
 		tmp.Dueler = req.User
+		wkbox.UpdatePara(&tmp.Key, tmp)
+	}
+	side := ""
+	if req.IsDuel {
+		side = "Dueler"
+	} else {
+		side = "Watcher"
 	}
 
-	wkbox.UpdatePara(&tmp.Key, tmp)
+	b.BroadCast(&pb.RoomMsg{
+		Key:     req.Key,
+		FromId:  req.User.Id,
+		FmName:  req.User.Name,
+		ToId:    "ALL",
+		ToName:  "ALL",
+		MsgType: pb.RoomMsg_SYSTEM_INFO,
+		Message: fmt.Sprintf("%s is joined to this room", side),
+	})
 
 	return &tmp, nil
 }
