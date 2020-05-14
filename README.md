@@ -37,3 +37,8 @@ https://medium.com/getamis/istio-%E5%9F%BA%E7%A4%8E-grpc-%E8%B2%A0%E8%BC%89%E5%9
 ## grpc Auth 
 
 https://grpc.io/docs/guides/auth/
+
+
+protoc --doc_out=./doc --doc_opt=markdown,message.proto proto/message.proto
+
+protoc -I proto/*.proto --doc_out=./doc --doc_opt=markdown,service.md proto/service.proto

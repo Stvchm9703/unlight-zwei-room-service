@@ -17,12 +17,6 @@
     - [RoomUpdateCardReq](#roomupdatecardreq)
     - [RoomUpdateCardReq.PlayerSide](#roomupdatecardreqplayerside)
   - [Scalar Value Types](#scalar-value-types)
-  
-    - [RoomMsg.MsgType](#ULZProto.RoomMsg.MsgType)
-    - [RoomStatus](#ULZProto.RoomStatus)
-    - [RoomUpdateCardReq.PlayerSide](#ULZProto.RoomUpdateCardReq.PlayerSide)
-  
-- [Scalar Value Types](#scalar-value-types)
 
 
 
