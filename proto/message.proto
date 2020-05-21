@@ -3,7 +3,7 @@ syntax="proto3";
 
 package ULZProto;
 option csharp_namespace         = "ULZAsset.ProtoMod";
-option go_package               = "proto";
+option go_package               = ".;proto";
 
 option java_multiple_files      = true;
 option java_package             = "io.grpc.ULZAsset.ProtoMod";
