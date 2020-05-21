@@ -40,7 +40,7 @@ func (b *ULZRoomServiceBackend) JoinRoom(ctx context.Context, req *pb.RoomReq) (
 		side = "Watcher"
 	}
 
-	b.BroadCast(&pb.RoomMsg{
+	tmpmsg := pb.RoomMsg{
 		Key:     req.Key,
 		FromId:  req.User.Id,
 		FmName:  req.User.Name,
@@ -48,7 +48,9 @@ func (b *ULZRoomServiceBackend) JoinRoom(ctx context.Context, req *pb.RoomReq) (
 		ToName:  "ALL",
 		MsgType: pb.RoomMsg_SYSTEM_INFO,
 		Message: fmt.Sprintf("%s is joined to this room", side),
-	})
+	}
+
+	b.BroadCast(&tmpmsg)
 
 	return &tmp, nil
 }
